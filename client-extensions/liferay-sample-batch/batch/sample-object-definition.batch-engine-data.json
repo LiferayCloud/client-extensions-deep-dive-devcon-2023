@@ -40,7 +40,7 @@
       "objectActions": [
         {
           "active": true,
-          "conditionExpression": "r_userToTicketsAssignee_userId =! oldValue(\"r_userToTicketsAssignee_userId\")",
+          "conditionExpression": "r_userToTicketsAssignee_userId != oldValue(\"r_userToTicketsAssignee_userId\")",
           "description": "",
           "errorMessage": {},
           "externalReferenceCode": "ebe48baa-b5d3-f81d-3d95-9d2d5504c816",
