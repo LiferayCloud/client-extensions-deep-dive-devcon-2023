@@ -20,8 +20,7 @@
   },
   "items": [
     {
-      "accountEntryRestricted": true,
-      "accountEntryRestrictedObjectFieldName": "r_accountToTicketsRestriction_accountEntryId",
+      "accountEntryRestricted": false,
       "actions": {
         "delete": {},
         "get": {},
@@ -716,76 +715,6 @@
       ],
       "objectLayouts": [],
       "objectRelationships": [
-        {
-          "deletionType": "prevent",
-          "label": {
-            "en_US": "Related Tickets"
-          },
-          "name": "relatedTickets",
-          "objectDefinitionExternalReferenceCode1": "C_TICKET",
-          "objectDefinitionExternalReferenceCode2": "C_TICKET",
-          "objectDefinitionName2": "Ticket",
-          "parameterObjectFieldId": 0,
-          "parameterObjectFieldName": "",
-          "reverse": false,
-          "type": "manyToMany"
-        },
-        {
-          "deletionType": "prevent",
-          "label": {
-            "en_US": "Related Tickets"
-          },
-          "name": "relatedTickets",
-          "objectDefinitionExternalReferenceCode1": "C_TICKET",
-          "objectDefinitionExternalReferenceCode2": "C_TICKET",
-          "objectDefinitionName2": "Ticket",
-          "parameterObjectFieldId": 0,
-          "parameterObjectFieldName": "",
-          "reverse": true,
-          "type": "manyToMany"
-        },
-        {
-          "deletionType": "prevent",
-          "label": {
-            "en_US": "Tickets to Products"
-          },
-          "name": "ticketsToProducts",
-          "objectDefinitionExternalReferenceCode1": "C_TICKET",
-          "objectDefinitionExternalReferenceCode2": "bbb9c409-e7b2-525e-43b7-6cf8c0b46dbf",
-          "objectDefinitionName2": "CPDefinition",
-          "parameterObjectFieldId": 0,
-          "parameterObjectFieldName": "",
-          "reverse": false,
-          "type": "manyToMany"
-        },
-        {
-          "deletionType": "prevent",
-          "label": {
-            "en_US": "Tickets to Orders"
-          },
-          "name": "ticketsToOrders",
-          "objectDefinitionExternalReferenceCode1": "C_TICKET",
-          "objectDefinitionExternalReferenceCode2": "b36c8820-313a-0b4d-ab33-c44f353d4d52",
-          "objectDefinitionName2": "CommerceOrder",
-          "parameterObjectFieldId": 0,
-          "parameterObjectFieldName": "",
-          "reverse": false,
-          "type": "manyToMany"
-        },
-        {
-          "deletionType": "prevent",
-          "label": {
-            "en_US": "Tickets to Users, Watchers"
-          },
-          "name": "ticketsToUsersWatchers",
-          "objectDefinitionExternalReferenceCode1": "C_TICKET",
-          "objectDefinitionExternalReferenceCode2": "45c46c3e-88d0-b8f3-4461-7a5ae8f567c0",
-          "objectDefinitionName2": "User",
-          "parameterObjectFieldId": 0,
-          "parameterObjectFieldName": "",
-          "reverse": false,
-          "type": "manyToMany"
-        }
       ],
       "objectValidationRules": [],
       "objectViews": [],
