@@ -1,0 +1,3 @@
+dxp_buildargs = {
+  "DXP_BASE_IMAGE": "liferay/dxp:7.4.13-u74-d5.0.28-20230425211256"
+}
