@@ -40,52 +40,6 @@
       "objectActions": [
         {
           "active": true,
-          "conditionExpression": "r_userToTicketsAssignee_userId != oldValue(\"r_userToTicketsAssignee_userId\")",
-          "description": "",
-          "errorMessage": {},
-          "externalReferenceCode": "ebe48baa-b5d3-f81d-3d95-9d2d5504c816",
-          "label": {
-            "en_US": "Ticket Assigned, Email Notification, Assignee"
-          },
-          "name": "ticketAssignedEmailNotificationAssignee",
-          "objectActionExecutorKey": "notification",
-          "objectActionTriggerKey": "onAfterUpdate",
-          "parameters": {
-            "notificationTemplateExternalReferenceCode": "TICKET_ASSIGNED_ASSIGNEE_EMAIL",
-            "notificationTemplateId": 44328,
-            "type": "email"
-          },
-          "status": {
-            "code": 0,
-            "label": "never-ran",
-            "label_i18n": "Never Ran"
-          }
-        },
-        {
-          "active": true,
-          "conditionExpression": "r_userToTicketsAssignee_userId != oldValue(\"r_userToTicketsAssignee_userId\")",
-          "description": "",
-          "errorMessage": {},
-          "externalReferenceCode": "3a44d8ad-15f5-6b6f-9ebf-d1f8e814e835",
-          "label": {
-            "en_US": "Ticket Assigned, User Notification, Assignee"
-          },
-          "name": "ticketAssignedUserNotificationAssignee",
-          "objectActionExecutorKey": "notification",
-          "objectActionTriggerKey": "onAfterUpdate",
-          "parameters": {
-            "notificationTemplateExternalReferenceCode": "TICKET_ASSIGNED_ASSIGNEE_USER",
-            "notificationTemplateId": 44364,
-            "type": "userNotification"
-          },
-          "status": {
-            "code": 0,
-            "label": "never-ran",
-            "label_i18n": "Never Ran"
-          }
-        },
-        {
-          "active": true,
           "conditionExpression": "",
           "description": "",
           "errorMessage": {},
