@@ -1,14 +1,14 @@
 assemble:
     - from: batch
       into: batch
-liferay-sample-batch:
-    name: Liferay Sample Batch
-    oAuthApplicationHeadlessServer: liferay-sample-batch-oauth-application-headless-server
+ticket-batch:
+    name: Ticket Batch
+    oAuthApplicationHeadlessServer: ticket-batch-oauth-application-headless-server
     type: batch
-liferay-sample-batch-oauth-application-headless-server:
+ticket-batch-oauth-application-headless-server:
     .serviceAddress: localhost:8080
     .serviceScheme: http
-    name: Liferay Sample OAuth Application Headless Server
+    name: Ticket Batch OAuth Application Headless Server
     scopes:
         - Liferay.Headless.Admin.Workflow.everything
         - Liferay.Headless.Batch.Engine.everything
