@@ -1,0 +1,16 @@
+assemble:
+    - from: batch
+      into: batch
+list-type-batch:
+    name: List Type Batch
+    oAuthApplicationHeadlessServer: list-type-batch-importer
+    type: batch
+list-type-batch-importer:
+    .serviceAddress: localhost:8080
+    .serviceScheme: http
+    name: List Type Batch Importer Application
+    scopes:
+        - Liferay.Headless.Admin.Workflow.everything
+        - Liferay.Headless.Batch.Engine.everything
+        - Liferay.Object.Admin.REST.everything
+    type: oAuthApplicationHeadlessServer
