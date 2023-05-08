@@ -1,0 +1,15 @@
+assemble:
+    - from: build/vite
+      into: static
+current-tickets-custom-element:
+    cssURLs:
+        - "**/*.css"
+    friendlyURLMapping: current-tickets-custom-element
+    htmlElementName: current-tickets-custom-element
+    instanceable: false
+    name: Current Tickets Custom Element
+    portletCategoryName: category.client-extensions
+    type: customElement
+    urls:
+        - "*.js"
+    useESM: true
