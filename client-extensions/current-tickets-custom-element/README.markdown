@@ -1,6 +1,6 @@
-# HMR configuraiton
+# HMR Configuration
 
-1. In `vite.config.ts` add a server section as follows. This allows it to serve the svgs itself rather than trying to get them from liferay.
+1. In `vite.config.ts` add a server section as follows.
 	```
 	server: {
 		origin: 'http://localhost:5173'
@@ -13,9 +13,10 @@
         - http://localhost:5173/@vite/client
         - http://localhost:5173/src/main.tsx
 	```
-1. Start liferay
 
-1. Log in to liferay, access Site Settings -> Analytics and add the following code to the section for "Matomo":
+1. Start Liferay
+
+1. Log in to Liferay, access Site Settings -> Analytics and add the following code to the section for "Matomo":
 
 	```
 	<script type="module">
@@ -26,4 +27,7 @@
 	window.__vite_plugin_react_preamble_installed__ = true
 	</script>
 	```
-5. After liferay starts and the client extension deploys, start yarn dev
+
+1. After Liferay starts and the client extension deploys, start `yarn dev`
+
+Now you should be able to edit source code and the React app will update in Liferay immediately.
