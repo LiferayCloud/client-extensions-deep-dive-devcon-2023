@@ -32,5 +32,6 @@ export async function fetchListTypeDefinitions() {
 			listTypeDefinitionERC
 		);
 	}
+
 	return listTypeDefinitions;
 }
