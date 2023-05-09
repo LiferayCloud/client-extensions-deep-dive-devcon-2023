@@ -3,31 +3,83 @@ import './App.css';
 import 'react-data-grid/lib/styles.css';
 import axios from 'axios';
 import DataGrid from 'react-data-grid';
+import {LoremIpsum} from 'lorem-ipsum';
+import {
+	fetchListTypeDefinitions,
+	LIST_TICKET_PRIORITIES,
+	LIST_TICKET_REGIONS,
+	LIST_TICKET_STATUSES,
+	LIST_TICKET_RESOLUTIONS,
+	LIST_TICKET_TYPES,
+} from './listTypeEntries';
 
+const lorem = new LoremIpsum();
+
+const listTypeDefinitions = await fetchListTypeDefinitions();
+
+const priorities = listTypeDefinitions[LIST_TICKET_PRIORITIES];
+const statuses = listTypeDefinitions[LIST_TICKET_STATUSES];
+const regions = listTypeDefinitions[LIST_TICKET_REGIONS];
+const resolutions = listTypeDefinitions[LIST_TICKET_RESOLUTIONS];
+const types = listTypeDefinitions[LIST_TICKET_TYPES];
+
+function getRandomElement(array) {
+	return array[Math.floor(Math.random() * array.length)].key;
+}
+
+async function addTestRow() {
+	await axios.post(`/o/c/tickets?p_auth=${Liferay.authToken}`, {
+		priority: {
+			key: getRandomElement(priorities),
+		},
+		status: {
+			code: 0,
+		},
+		resolution: {
+			key: getRandomElement(resolutions),
+		},
+		subject: lorem.generateWords(8),
+		supportRegion: {
+			key: getRandomElement(regions),
+		},
+		ticketStatus: {
+			key: getRandomElement(statuses),
+		},
+		type: {
+			key: getRandomElement(types),
+		},
+	});
+}
+
+const PAGE_SIZE = 20;
 function App() {
 	const [rows, setRows] = useState([]);
+	const [page, setPage] = useState(1);
+
+	async function fetchTickets() {
+		const {data} = await axios.get(
+			`/o/c/tickets?p_auth=${Liferay.authToken}&pageSize=${PAGE_SIZE}&page=${page}`
+		);
+
+		setRows(
+			data?.items.map((row) => ({
+				priority: row.priority?.name,
+				resolution: row.resolution?.name,
+				subject: row.subject,
+				supportRegion: row.supportRegion?.name,
+				ticketStatus: row.ticketStatus?.name,
+				type: row.type?.name,
+			}))
+		);
+	}
 
 	useEffect(() => {
-		async function fetchTickets() {
-			const {data} = await axios.get(
-				`/o/c/tickets?p_auth=${Liferay.authToken}`
-			);
-
-			setRows(
-				data?.items.map((row) => ({
-					priority: row.priority?.name,
-					subject: row.subject,
-					supportRegion: row.supportRegion?.name,
-					ticketStatus: row.status?.label_i18n,
-					type: row.type?.name,
-				}))
-			);
-		}
 		fetchTickets();
 	}, []);
 
 	const columns = [
-		{key: 'subject', name: 'Subject', width: '60%'},
+		{key: 'subject', name: 'Subject', width: '45%'},
+		{key: 'resolution', name: 'Resolution', width: '15%'},
 		{key: 'ticketStatus', name: 'Status', width: '10%'},
 		{key: 'priority', name: 'Priority', width: '10%'},
 		{key: 'type', name: 'Type', width: '10%'},
@@ -48,6 +100,18 @@ function App() {
 						</li>
 						<li>
 							<a href="">Issues</a>
+						</li>
+						<li>
+							<a
+								href=""
+								onClick={(event) => {
+									addTestRow();
+									fetchTickets();
+									event.preventDefault();
+								}}
+							>
+								Add Random Test Row
+							</a>
 						</li>
 					</ul>
 				</nav>
