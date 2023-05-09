@@ -10,7 +10,6 @@ ticket-entry-batch-importer:
     .serviceScheme: http
     name: Ticket Entry Batch Importer Application
     scopes:
-        - Liferay.Headless.Admin.Workflow.everything
+        - C_Ticket
         - Liferay.Headless.Batch.Engine.everything
-        - Liferay.Object.Admin.REST.everything
     type: oAuthApplicationHeadlessServer
