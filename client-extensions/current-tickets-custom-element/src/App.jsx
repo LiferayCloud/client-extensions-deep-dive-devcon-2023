@@ -4,7 +4,8 @@ import 'react-data-grid/lib/styles.css';
 import axios from 'axios';
 import DataGrid from 'react-data-grid';
 import {LoremIpsum} from 'lorem-ipsum';
-import ClayAlert  from '@clayui/alert';
+import ClayAlert from '@clayui/alert';
+import {ClayPaginationBarWithBasicItems} from '@clayui/pagination-bar';
 import {
 	fetchListTypeDefinitions,
 	LIST_TICKET_PRIORITIES,
@@ -58,18 +59,54 @@ const initialToastState = {
 	type: null,
 };
 
+const initialFilterState = {
+	field: '',
+	value: '',
+};
 
-const PAGE_SIZE = 20;
+const OPEN_ISSUE_FILTER = {
+	field: 'ticketStatus',
+	value: 'open',
+};
+
+const filters = [
+	{
+		field: 'ticketStatus',
+		value: 'open',
+		text: 'Open issues',
+	},
+	{
+		field: 'priority',
+		value: 'major',
+		text: 'Major Priority issues',
+	},
+	{
+		field: 'resolution',
+		value: 'unresolved',
+		text: 'Unresolved issues',
+	},
+];
+
 function App() {
 	const [rows, setRows] = useState([]);
+	const [filter, setFilter] = useState(initialFilterState);
 	const [page, setPage] = useState(1);
+	const [pageSize, setPageSize] = useState(20);
+	const [lastPage, setLastPage] = useState(0);
+	const [totalCount, setTotalCount] = useState(0);
 	const [toastMessage, setToastMessage] = useState(initialToastState);
 
 	async function fetchTickets() {
+		const filterSnippet =
+			filter && filter.field && filter.value
+				? encodeURI(`&filter=${filter.field} eq '${filter.value}'`)
+				: '';
 		const {data} = await axios.get(
-			`/o/c/tickets?p_auth=${Liferay.authToken}&pageSize=${PAGE_SIZE}&page=${page}`
+			`/o/c/tickets?p_auth=${Liferay.authToken}&pageSize=${pageSize}&page=${page}${filterSnippet}`
 		);
 
+		setLastPage(data.lastPage);
+		setTotalCount(data.totalCount);
 		setRows(
 			data?.items.map((row) => ({
 				priority: row.priority?.name,
@@ -84,7 +121,7 @@ function App() {
 
 	useEffect(() => {
 		fetchTickets();
-	}, []);
+	}, [page, pageSize, filter]);
 
 	const columns = [
 		{key: 'subject', name: 'Subject', width: '45%'},
@@ -120,12 +157,13 @@ function App() {
 						className="btn btn-primary ml-auto"
 						onClick={(event) => {
 							addTestRow();
+							fetchTickets();
 
 							setToastMessage({
-								content: "A new ticket was added!",
+								content: 'A new ticket was added!',
 								show: true,
-								type:"success"
-							})
+								type: 'success',
+							});
 							event.preventDefault();
 						}}
 					>
@@ -139,22 +177,52 @@ function App() {
 							rows={rows}
 							onRowsChange={setRows}
 						/>
+						<div className="my-3">
+							<ClayPaginationBarWithBasicItems
+								defaultActive={page}
+								active={page}
+								activeDelta={pageSize}
+								ellipsisBuffer={3}
+								ellipsisProps={{
+									'aria-label': 'More',
+									'title': 'More',
+								}}
+								onDeltaChange={(pageSize) => {
+									setPageSize(pageSize);
+								}}
+								onActiveChange={(page) => {
+									setPage(page);
+								}}
+								spritemap={Liferay.Icons.spritemap}
+								totalItems={totalCount}
+							/>
+						</div>
 					</div>
 					<nav className="col-md-2 ml-auto">
 						<h6 className="text-uppercase">Filters</h6>
 						<ul>
-							<li>
-								<a href="">My open issues</a>
-							</li>
-							<li>
-								<a href="">Reported by me</a>
-							</li>
-							<li>
-								<a href="">All issues</a>
-							</li>
-							<li>
-								<a href="">Open issues</a>
-							</li>
+							{filters.map((thisFilter, index) => (
+								<li key={index}>
+									<a
+										className={
+											filter === thisFilter
+												? 'font-weight-bold'
+												: ''
+										}
+										href=""
+										onClick={(event) => {
+											if (filter === thisFilter) {
+												setFilter(initialFilterState);
+											} else {
+												setFilter(thisFilter);
+											}
+											event.preventDefault();
+										}}
+									>
+										{thisFilter.text}
+									</a>
+								</li>
+							))}
 						</ul>
 					</nav>
 				</main>
@@ -181,7 +249,7 @@ function App() {
 						displayType={toastMessage.type}
 						onClose={() => setToastMessage(initialToastState)}
 						spritemap={Liferay.Icons.spritemap}
-							>
+					>
 						{toastMessage.content}
 					</ClayAlert>
 				</ClayAlert.ToastContainer>

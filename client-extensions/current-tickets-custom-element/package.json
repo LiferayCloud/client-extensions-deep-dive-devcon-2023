@@ -1,6 +1,8 @@
 {
 	"dependencies": {
 		"@clayui/alert": "^3.93.0",
+		"@clayui/pagination": "^3.94.0",
+		"@clayui/pagination-bar": "^3.94.0",
 		"axios": "^1.4.0",
 		"lorem-ipsum": "^2.0.8",
 		"react": "^18.2.0",
