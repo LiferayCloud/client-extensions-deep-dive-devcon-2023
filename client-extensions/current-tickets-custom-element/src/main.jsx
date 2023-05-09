@@ -1,14 +1,14 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import App from './App.jsx'
+import React from 'react';
+import {createRoot} from 'react-dom/client';
+import App from './App.jsx';
 
 class WebComponent extends HTMLElement {
 	connectedCallback() {
-		ReactDOM.render(
+		const root = createRoot(this);
+		root.render(
 			<React.StrictMode>
 				<App route={this.getAttribute('route') || '/'} />
-			</React.StrictMode>,
-			this
+			</React.StrictMode>
 		);
 	}
 }

@@ -17,19 +17,22 @@ import {
 
 const lorem = new LoremIpsum();
 
-const listTypeDefinitions = await fetchListTypeDefinitions();
-
-const priorities = listTypeDefinitions[LIST_TICKET_PRIORITIES];
-const statuses = listTypeDefinitions[LIST_TICKET_STATUSES];
-const regions = listTypeDefinitions[LIST_TICKET_REGIONS];
-const resolutions = listTypeDefinitions[LIST_TICKET_RESOLUTIONS];
-const types = listTypeDefinitions[LIST_TICKET_TYPES];
+let listTypeDefinitions = {};
 
 function getRandomElement(array) {
 	return array[Math.floor(Math.random() * array.length)].key;
 }
 
 async function addTestRow() {
+	if (!(LIST_TICKET_PRIORITIES in listTypeDefinitions)) {
+		listTypeDefinitions = await fetchListTypeDefinitions();
+	}
+	const priorities = listTypeDefinitions[LIST_TICKET_PRIORITIES];
+	const statuses = listTypeDefinitions[LIST_TICKET_STATUSES];
+	const regions = listTypeDefinitions[LIST_TICKET_REGIONS];
+	const resolutions = listTypeDefinitions[LIST_TICKET_RESOLUTIONS];
+	const types = listTypeDefinitions[LIST_TICKET_TYPES];
+
 	await axios.post(`/o/c/tickets?p_auth=${Liferay.authToken}`, {
 		priority: {
 			key: getRandomElement(priorities),
