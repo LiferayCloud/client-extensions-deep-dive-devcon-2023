@@ -1,6 +1,8 @@
 {
 	"dependencies": {
+		"@clayui/alert": "^3.93.0",
 		"axios": "^1.4.0",
+		"lorem-ipsum": "^2.0.8",
 		"react": "^18.2.0",
 		"react-data-grid": "^7.0.0-beta.30",
 		"react-dom": "^18.2.0"
