@@ -67,10 +67,6 @@ const initialFilterState = {
 	value: '',
 };
 
-const OPEN_ISSUE_FILTER = {
-	field: 'ticketStatus',
-	value: 'open',
-};
 
 const filters = [
 	{
@@ -96,7 +92,6 @@ function App() {
 	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState(20);
 	const [search, setSearch] = useState();
-	const [lastPage, setLastPage] = useState(0);
 	const [totalCount, setTotalCount] = useState(0);
 	const [toastMessage, setToastMessage] = useState(initialToastState);
 
@@ -110,7 +105,6 @@ function App() {
 			`/o/c/tickets?p_auth=${Liferay.authToken}&pageSize=${pageSize}&page=${page}${filterSnippet}${searchSnippet}`
 		);
 
-		setLastPage(data.lastPage);
 		setTotalCount(data.totalCount);
 		setRows(
 			data?.items.map((row) => ({
