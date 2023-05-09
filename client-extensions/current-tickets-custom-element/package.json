@@ -1,5 +1,6 @@
 {
 	"dependencies": {
+		"axios": "^1.4.0",
 		"react": "^18.2.0",
 		"react-data-grid": "^7.0.0-beta.30",
 		"react-dom": "^18.2.0"
@@ -16,7 +17,7 @@
 	},
 	"name": "vite-project",
 	"private": true,
-	"prettier":  {
+	"prettier": {
 		"bracketSpacing": false,
 		"endOfLine": "lf",
 		"jsxSingleQuote": false,
