@@ -92,6 +92,7 @@ function App() {
 	const [filter, setFilter] = useState(initialFilterState);
 	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState(20);
+	const [search, setSearch] = useState();
 	const [lastPage, setLastPage] = useState(0);
 	const [totalCount, setTotalCount] = useState(0);
 	const [toastMessage, setToastMessage] = useState(initialToastState);
@@ -101,8 +102,9 @@ function App() {
 			filter && filter.field && filter.value
 				? encodeURI(`&filter=${filter.field} eq '${filter.value}'`)
 				: '';
+		const searchSnippet = search ? encodeURI(`&search=${search}`) : '';
 		const {data} = await axios.get(
-			`/o/c/tickets?p_auth=${Liferay.authToken}&pageSize=${pageSize}&page=${page}${filterSnippet}`
+			`/o/c/tickets?p_auth=${Liferay.authToken}&pageSize=${pageSize}&page=${page}${filterSnippet}${searchSnippet}`
 		);
 
 		setLastPage(data.lastPage);
@@ -121,7 +123,7 @@ function App() {
 
 	useEffect(() => {
 		fetchTickets();
-	}, [page, pageSize, filter]);
+	}, [page, pageSize, filter, search]);
 
 	const columns = [
 		{key: 'subject', name: 'Subject', width: '45%'},
@@ -172,6 +174,14 @@ function App() {
 				</header>
 				<main className="row p-0">
 					<div className="col-md-10 m-0 p-0 pr-3">
+						<input
+							className="mb-3 w-100"
+							placeholder="Search Tickets"
+							type="text"
+							onChange={(event) => {
+								setSearch(event.target.value);
+							}}
+						></input>
 						<DataGrid
 							columns={columns}
 							rows={rows}
