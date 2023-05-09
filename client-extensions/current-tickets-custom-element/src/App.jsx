@@ -67,7 +67,6 @@ const initialFilterState = {
 	value: '',
 };
 
-
 const filters = [
 	{
 		field: 'ticketStatus',
