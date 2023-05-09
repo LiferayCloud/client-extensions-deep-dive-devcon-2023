@@ -1,6 +1,4 @@
-import {useState} from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
+import {useEffect, useState} from 'react';
 import './App.css';
 import 'react-data-grid/lib/styles.css';
 import DataGrid from 'react-data-grid';
@@ -9,19 +7,23 @@ function App() {
 	const [count, setCount] = useState(0);
 	const [rows, setRows] = useState([]);
 
+	useEffect(() => {
+		setRows([]);
+	}, {});
+
 	const columns = [
-		{key: 'subject', name: 'Subject'},
-		{key: 'ticketStatus', name: 'Status'},
-		{key: 'description', name: 'Description'},
-		{key: 'priority', name: 'Priority'},
-		{key: 'type', name: 'Issue Type'},
-		{key: 'supportRegion', name: 'Support Region'},
+		{key: 'subject', name: 'Subject', width: '60%'},
+		{key: 'ticketStatus', name: 'Status', width: '10%'},
+		{key: 'priority', name: 'Priority', width: '10%'},
+		{key: 'type', name: 'Type', width: '10%'},
+		{key: 'supportRegion', name: 'Region', width: '10%'},
 	];
 
 	return (
-		<section className="container current-tickets row">
+		<section className="container current-tickets m-0 p-0 row">
 			<div className="col-md-2">
 				<nav className="h-100 site-navigation">
+					<h6 className="text-uppercase">Site</h6>
 					<ul>
 						<li>
 							<a href="">Dashboards</a>
@@ -51,6 +53,7 @@ function App() {
 						/>
 					</div>
 					<nav className="col-md-2 ml-auto">
+						<h6 className="text-uppercase">Filters</h6>
 						<ul>
 							<li>
 								<a href="">My open issues</a>
@@ -70,7 +73,17 @@ function App() {
 			</div>
 			<div class="col pr-0">
 				<footer className="bg-light p-3 w-100 my-3">
-					<div>Recent Activity</div>
+					<h2>Recent Activity</h2>
+					<ul>
+						<li>
+							Ticket #1234 closed with status "Resolved" by
+							administrator
+						</li>
+						<li>
+							Ticket #4566 closed with status "Won't fix" by
+							administrator
+						</li>
+					</ul>
 				</footer>
 			</div>
 		</section>
