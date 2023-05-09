@@ -10,7 +10,6 @@ list-type-batch-importer:
     .serviceScheme: http
     name: List Type Batch Importer Application
     scopes:
-        - Liferay.Headless.Admin.Workflow.everything
+        - Liferay.Headless.Admin.List.Type.everything
         - Liferay.Headless.Batch.Engine.everything
-        - Liferay.Object.Admin.REST.everything
     type: oAuthApplicationHeadlessServer
