@@ -14,7 +14,10 @@ import {
 	LIST_TICKET_RESOLUTIONS,
 	LIST_TICKET_TYPES,
 } from './listTypeEntries';
+import RelativeTime from '@yaireo/relative-time'
 
+
+const relativeTime = new RelativeTime();
 const lorem = new LoremIpsum();
 
 let listTypeDefinitions = {};
@@ -87,6 +90,7 @@ const filters = [
 
 function App() {
 	const [rows, setRows] = useState([]);
+	const [recentTickets, setRecentTickets] = useState([]);
 	const [filter, setFilter] = useState(initialFilterState);
 	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState(20);
@@ -117,9 +121,32 @@ function App() {
 		);
 	}
 
+	async function fetchRecentTickets() {
+		const {data} = await axios.get(
+			`/o/c/tickets?p_auth=${Liferay.authToken}&pageSize=3&page=1&sort=id:desc`
+		);
+
+		setRecentTickets(
+			data?.items.map((row) => ({
+				dateCreated: new Date(row.dateCreated),
+				id: row.id,
+				priority: row.priority?.name,
+				resolution: row.resolution?.name,
+				subject: row.subject,
+				supportRegion: row.supportRegion?.name,
+				ticketStatus: row.ticketStatus?.name,
+				type: row.type?.name,
+			}))
+		);
+	}
+
 	useEffect(() => {
 		fetchTickets();
 	}, [page, pageSize, filter, search]);
+
+	useEffect(() => {
+		fetchRecentTickets();
+	}, []);
 
 	const columns = [
 		{key: 'subject', name: 'Subject', width: '45%'},
@@ -154,14 +181,18 @@ function App() {
 					<button
 						className="btn btn-primary ml-auto"
 						onClick={(event) => {
-							addTestRow();
-							fetchTickets();
+							async function createNewTicket() {
+								await addTestRow();
+								fetchTickets();
+								fetchRecentTickets();
 
-							setToastMessage({
-								content: 'A new ticket was added!',
-								show: true,
-								type: 'success',
-							});
+								setToastMessage({
+									content: 'A new ticket was added!',
+									show: true,
+									type: 'success',
+								});
+							}
+							createNewTicket();
 							event.preventDefault();
 						}}
 					>
@@ -237,14 +268,26 @@ function App() {
 				<footer className="bg-light p-3 w-100 my-3">
 					<h2>Recent Activity</h2>
 					<ul>
-						<li>
-							Ticket #1234 closed with status "Resolved" by
-							administrator
-						</li>
-						<li>
-							Ticket #4566 closed with status "Won't fix" by
-							administrator
-						</li>
+						{recentTickets.length > 0 &&
+							recentTickets.map((recentTicket, index) => (
+								<li key={index}>
+									Ticket #{recentTicket.id} was created with
+									status "{recentTicket.ticketStatus}" for
+									support region {recentTicket.supportRegion} {relativeTime.from(recentTicket.dateCreated)}.
+								</li>
+							))}
+						{recentTickets.length === 0 && (
+							<>
+								<li>
+									Ticket #1234 closed with status "Resolved"
+									by administrator
+								</li>
+								<li>
+									Ticket #4566 closed with status "Won't fix"
+									by administrator
+								</li>
+							</>
+						)}
 					</ul>
 				</footer>
 			</div>
