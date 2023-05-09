@@ -1,15 +1,30 @@
 import {useEffect, useState} from 'react';
 import './App.css';
 import 'react-data-grid/lib/styles.css';
+import axios from 'axios';
 import DataGrid from 'react-data-grid';
 
 function App() {
-	const [count, setCount] = useState(0);
 	const [rows, setRows] = useState([]);
 
 	useEffect(() => {
-		setRows([]);
-	}, {});
+		async function fetchTickets() {
+			const {data} = await axios.get(
+				`/o/c/tickets?p_auth=${Liferay.authToken}`
+			);
+
+			setRows(
+				data?.items.map((row) => ({
+					priority: row.priority?.name,
+					subject: row.subject,
+					supportRegion: row.supportRegion?.name,
+					ticketStatus: row.status?.label_i18n,
+					type: row.type?.name,
+				}))
+			);
+		}
+		fetchTickets();
+	}, []);
 
 	const columns = [
 		{key: 'subject', name: 'Subject', width: '60%'},
@@ -71,7 +86,7 @@ function App() {
 					</nav>
 				</main>
 			</div>
-			<div class="col pr-0">
+			<div className="col pr-0">
 				<footer className="bg-light p-3 w-100 my-3">
 					<h2>Recent Activity</h2>
 					<ul>
