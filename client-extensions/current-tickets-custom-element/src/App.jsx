@@ -89,7 +89,7 @@ const filters = [
 ];
 
 function App() {
-	const [rows, setRows] = useState([]);
+	const [tickets, setTickets] = useState([]);
 	const [recentTickets, setRecentTickets] = useState([]);
 	const [filter, setFilter] = useState(initialFilterState);
 	const [page, setPage] = useState(1);
@@ -109,14 +109,14 @@ function App() {
 		);
 
 		setTotalCount(data.totalCount);
-		setRows(
-			data?.items.map((row) => ({
-				priority: row.priority?.name,
-				resolution: row.resolution?.name,
-				subject: row.subject,
-				supportRegion: row.supportRegion?.name,
-				ticketStatus: row.ticketStatus?.name,
-				type: row.type?.name,
+		setTickets(
+			data?.items.map((ticket) => ({
+				priority: ticket.priority?.name,
+				resolution: ticket.resolution?.name,
+				subject: ticket.subject,
+				supportRegion: ticket.supportRegion?.name,
+				ticketStatus: ticket.ticketStatus?.name,
+				type: ticket.type?.name,
 			}))
 		);
 	}
@@ -211,8 +211,8 @@ function App() {
 						></input>
 						<DataGrid
 							columns={columns}
-							rows={rows}
-							onRowsChange={setRows}
+							rows={tickets}
+							onRowsChange={setTickets}
 						/>
 						<div className="my-3">
 							<ClayPaginationBarWithBasicItems
