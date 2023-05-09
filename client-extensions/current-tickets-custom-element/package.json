@@ -16,6 +16,16 @@
 	},
 	"name": "vite-project",
 	"private": true,
+	"prettier":  {
+		"bracketSpacing": false,
+		"endOfLine": "lf",
+		"jsxSingleQuote": false,
+		"quoteProps": "consistent",
+		"singleQuote": true,
+		"tabWidth": 4,
+		"trailingComma": "es5",
+		"useTabs": true
+	},
 	"scripts": {
 		"build": "vite build",
 		"dev": "vite",
