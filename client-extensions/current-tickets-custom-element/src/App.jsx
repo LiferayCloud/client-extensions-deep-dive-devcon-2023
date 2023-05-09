@@ -4,6 +4,7 @@ import 'react-data-grid/lib/styles.css';
 import axios from 'axios';
 import DataGrid from 'react-data-grid';
 import {LoremIpsum} from 'lorem-ipsum';
+import ClayAlert  from '@clayui/alert';
 import {
 	fetchListTypeDefinitions,
 	LIST_TICKET_PRIORITIES,
@@ -51,10 +52,18 @@ async function addTestRow() {
 	});
 }
 
+const initialToastState = {
+	content: null,
+	show: false,
+	type: null,
+};
+
+
 const PAGE_SIZE = 20;
 function App() {
 	const [rows, setRows] = useState([]);
 	const [page, setPage] = useState(1);
+	const [toastMessage, setToastMessage] = useState(initialToastState);
 
 	async function fetchTickets() {
 		const {data} = await axios.get(
@@ -101,26 +110,26 @@ function App() {
 						<li>
 							<a href="">Issues</a>
 						</li>
-						<li>
-							<a
-								href=""
-								onClick={(event) => {
-									addTestRow();
-									fetchTickets();
-									event.preventDefault();
-								}}
-							>
-								Add Random Test Row
-							</a>
-						</li>
 					</ul>
 				</nav>
 			</div>
 			<div className="col-md-10">
 				<header className="align-items-center bg-light mb-3 p-3 row">
 					<h1> Your Tickets</h1>
-					<button className="btn btn-primary ml-auto">
-						Create a New Ticket{' '}
+					<button
+						className="btn btn-primary ml-auto"
+						onClick={(event) => {
+							addTestRow();
+
+							setToastMessage({
+								content: "A new ticket was added!",
+								show: true,
+								type:"success"
+							})
+							event.preventDefault();
+						}}
+					>
+						Create a New Ticket
 					</button>
 				</header>
 				<main className="row p-0">
@@ -165,6 +174,18 @@ function App() {
 					</ul>
 				</footer>
 			</div>
+			{toastMessage.show && (
+				<ClayAlert.ToastContainer>
+					<ClayAlert
+						autoClose={3000}
+						displayType={toastMessage.type}
+						onClose={() => setToastMessage(initialToastState)}
+						spritemap={Liferay.Icons.spritemap}
+							>
+						{toastMessage.content}
+					</ClayAlert>
+				</ClayAlert.ToastContainer>
+			)}
 		</section>
 	);
 }
