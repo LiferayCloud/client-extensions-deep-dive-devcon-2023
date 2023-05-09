@@ -14,6 +14,7 @@
         - http://localhost:5173/src/main.tsx
 	```
 1. Start liferay
+
 1. Log in to liferay, access Site Settings -> Analytics and add the following code to the section for "Matomo":
 
 	```
