@@ -1,9 +1,9 @@
 assemble:
-    - from: build/vite
+    - from: build/assets
       into: static
 current-tickets-custom-element:
     cssURLs:
-        - "**/*.css"
+        - "*.css"
     friendlyURLMapping: current-tickets-custom-element
     htmlElementName: current-tickets-custom-element
     instanceable: false
@@ -12,4 +12,6 @@ current-tickets-custom-element:
     type: customElement
     urls:
         - "*.js"
+        #- http://localhost:5173/@vite/client
+        #- http://localhost:5173/src/main.jsx
     useESM: true
