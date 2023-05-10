@@ -2,20 +2,20 @@ assemble:
     - include:
         - package.json
         - "**/*.js"
-ticket-oauth-application-user-agent:
+ticket-node-oauth-application-user-agent:
     .serviceAddress: localhost:3001
     .serviceScheme: http
-    name: Ticket OAuth Application User Agent
+    name: Ticket Node OAuth Application User Agent
     scopes:
         - C_Ticket
     type: oAuthApplicationUserAgent
-ticket-object-action-1:
-    name: Ticket Object Action 1
-    oAuth2ApplicationExternalReferenceCode: ticket-oauth-application-user-agent
+ticket-node-object-action-1:
+    name: Ticket Node Object Action 1
+    oAuth2ApplicationExternalReferenceCode: ticket-node-oauth-application-user-agent
     resourcePath: /ticket/object/action/1
     type: objectAction
-ticket-object-action-2:
-    name: Ticket Object Action 2
+ticket-node-object-action-2:
+    name: Ticket Node Object Action 2
     oAuth2ApplicationExternalReferenceCode: ticket-oauth-application-user-agent
     resourcePath: /ticket/object/action/2
     type: objectAction
