@@ -202,7 +202,7 @@ function App() {
 				<main className="row p-0">
 					<div className="col-md-10 m-0 p-0 pr-3">
 						<input
-							className="mb-3 w-100"
+							className="form-control mb-3 w-100"
 							placeholder="Search Tickets"
 							type="text"
 							onChange={(event) => {
