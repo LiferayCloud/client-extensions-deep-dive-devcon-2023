@@ -61,26 +61,6 @@
 						"label": "never-ran",
 						"label_i18n": "Never Ran"
 					}
-				},
-				{
-					"active": true,
-					"conditionExpression": "",
-					"description": "",
-					"errorMessage": {
-					},
-					"label": {
-						"en_US": "Ticket Spring Boot Update 2"
-					},
-					"name": "TicketSpringBootUpdate2",
-					"objectActionExecutorKey": "function#ticket-spring-boot-object-action-2",
-					"objectActionTriggerKey": "onAfterUpdate",
-					"parameters": {
-					},
-					"status": {
-						"code": 0,
-						"label": "never-ran",
-						"label_i18n": "Never Ran"
-					}
 				}
 			],
 			"objectFields": [

@@ -64,28 +64,6 @@ public class TicketRestController {
 		return new ResponseEntity<>(json, HttpStatus.CREATED);
 	}
 
-	@PostMapping("/ticket/object/action/2")
-	public ResponseEntity<String> postTicketObjectAction2(
-		@AuthenticationPrincipal Jwt jwt, @RequestBody String json) {
-
-		if (_log.isInfoEnabled()) {
-			_log.info("JWT Claims: " + jwt.getClaims());
-			_log.info("JWT ID: " + jwt.getId());
-			_log.info("JWT Subject: " + jwt.getSubject());
-
-			try {
-				JSONObject jsonObject = new JSONObject(json);
-
-				_log.info("\n\n" + jsonObject.toString(4) + "\n");
-			}
-			catch (Exception exception) {
-				_log.error("JSON: " + json, exception);
-			}
-		}
-
-		return new ResponseEntity<>(json, HttpStatus.CREATED);
-	}
-
 	private static final Log _log = LogFactory.getLog(
 		TicketRestController.class);
 
