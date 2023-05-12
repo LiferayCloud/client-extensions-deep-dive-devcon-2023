@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<license>
+	<account-name>Liferay, Inc.</account-name>
+	<owner>Greg Amerson</owner>
+	<description>Liferay, Inc. Developer Activation Keys</description>
+	<product-name>DXP Development</product-name>
+	<product-version>7.4</product-version>
+	<license-name>Digital Enterprise Development</license-name>
+	<license-type>developer</license-type>
+	<license-version>6</license-version>
+	<start-date>Friday, May 12, 2023 4:40:44 PM GMT</start-date>
+	<expiration-date>Sunday, April 18, 2123 4:40:44 PM GMT</expiration-date>
+	<max-http-sessions>5</max-http-sessions>
+	<key>3868f6e3fc4766f23da4af3c5bbf97e0c3b6ed02b4d7fad8e0fcfa808d9e4af04579327f2a265e93071be5191f9cdb8c21e54b4fd7f0298057547e930c6b2a917cc2248e4399179fd38a5b20bcbef867365aff34ec12e4ecad479827d7bbc8384c41cc0353b642cdf962a0a791850356788e06cc95985836addd9274578e4e02f0e98f8d</key>
+</license>
