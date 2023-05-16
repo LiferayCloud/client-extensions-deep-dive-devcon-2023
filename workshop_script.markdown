@@ -20,6 +20,22 @@
 
 ## Workshop Exercise
 
+### Raw steps
+
+```bash
+./gradlew :client-extensions:list-type-batch:deploy
+./gradlew :client-extensions:ticket-batch:deploy
+./gradlew :client-extensions:current-tickets-custom-element:deploy
+# create page /tickets, widget, single column
+# place current-tickets-custom-element on /tickets page
+./gradlew :client-extensions:tickets-theme-css:deploy
+# add tickets-theme-css to /tickets page
+./gradlew :client-extensions:ticket-spring-boot:deploy
+# in a separate terminal run
+(cd client-extensions/ticket-spring-boot/ && gw bootRun)
+./gradlew :client-extensions:ticket-entry-batch:deploy
+```
+
 ### Part 1
 
 ### Part 2
