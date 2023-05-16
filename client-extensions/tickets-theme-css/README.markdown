@@ -19,7 +19,7 @@ By deploying the dev version of this client extension, the build is changed as f
 
 1. Deploy in dev mode:
 
-    `blade gw clean deploydev packagerunserve`
+    `../../gradlew clean deployDev packageRunServe`
 
 2. Enable the Browsersync javascript extension. It is named "Tickets Theme Live JS" and needs to be added to whatever context you are using to test (e.g. you can add it to all pages or just the page you are testing)
 
