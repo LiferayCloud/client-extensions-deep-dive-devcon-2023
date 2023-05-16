@@ -51,7 +51,7 @@ async function addTestRow() {
 			key: getRandomElement(regions),
 		},
 		ticketStatus: {
-			key: getRandomElement(statuses),
+			key: "open",
 		},
 		type: {
 			key: getRandomElement(types),
@@ -123,12 +123,14 @@ function App() {
 
 	async function fetchRecentTickets() {
 		const {data} = await axios.get(
-			`/o/c/tickets?p_auth=${Liferay.authToken}&pageSize=3&page=1&sort=id:desc`
+			`/o/c/tickets?p_auth=${Liferay.authToken}&pageSize=3&page=1&sort=dateModified:desc`
 		);
 
 		setRecentTickets(
 			data?.items.map((row) => ({
 				dateCreated: new Date(row.dateCreated),
+				dateModified: new Date(row.dateModified),
+				description: row.description,
 				id: row.id,
 				priority: row.priority?.name,
 				resolution: row.resolution?.name,
@@ -271,8 +273,8 @@ function App() {
 						{recentTickets.length > 0 &&
 							recentTickets.map((recentTicket, index) => (
 								<li key={index}>
-									Ticket #{recentTicket.id} was created with
-									status "{recentTicket.ticketStatus}" for
+									Ticket #{recentTicket.id} was updated
+									with status "{recentTicket.ticketStatus}" and description "{recentTicket.description}" for
 									support region {recentTicket.supportRegion} {relativeTime.from(recentTicket.dateCreated)}.
 								</li>
 							))}
