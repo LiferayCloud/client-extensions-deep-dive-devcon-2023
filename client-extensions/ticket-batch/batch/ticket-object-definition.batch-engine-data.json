@@ -53,7 +53,7 @@
 					},
 					"name": "TicketSpringBootUpdate1",
 					"objectActionExecutorKey": "function#ticket-spring-boot-object-action-1",
-					"objectActionTriggerKey": "onAfterUpdate",
+					"objectActionTriggerKey": "onAfterAdd",
 					"parameters": {
 					},
 					"status": {
