@@ -117,6 +117,7 @@ function App() {
 		setTickets(
 			data?.items.map((ticket) => ({
 				priority: ticket.priority?.name,
+				description: ticket.description,
 				resolution: ticket.resolution?.name,
 				subject: ticket.subject,
 				supportRegion: ticket.supportRegion?.name,
@@ -156,7 +157,8 @@ function App() {
 	}, []);
 
 	const columns = [
-		{key: 'subject', name: 'Subject', width: '45%'},
+		{key: 'subject', name: 'Subject', width: '30%'},
+		{key: 'description', name: 'Descr.', width: '15%'},
 		{key: 'resolution', name: 'Resolution', width: '15%'},
 		{key: 'ticketStatus', name: 'Status', width: '10%'},
 		{key: 'priority', name: 'Priority', width: '10%'},
