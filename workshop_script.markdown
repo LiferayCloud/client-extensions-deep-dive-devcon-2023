@@ -31,91 +31,114 @@
 
 ## Workshop Exercise
 
-### Raw steps
+### Introduction
+
+- describe use case requirements:
+  - ticket management
+  - corporate style
+  - algorythmic documentation referral (reduce workload and speedup resolution)
+
+(screen capture of the working app)
+
+### Sections
+
+- Declarative Persistence
+- Front-end
+- Business Logic
+
+## Declarative Persistence
+
+- show existing pick lists (empty)
 
 ```bash
-# intro
-# screen capture of the working app, describe use case requirement for
-# documentation referral and corporate style
-# persistence
-# fontend
-# objectaction
-
-# show existing pick lists (empty)
-
 ./gradlew :client-extensions:list-type-batch:deploy
-
-# show the new pick list
-
-# discuss object definitions
-
-# without object action
-./gradlew :client-extensions:ticket-batch:deploy
-
-# show the new ticket object
-# describe the ticket headless API
-
-./gradlew :client-extensions:ticket-entry-batch:deploy
-
-# Optional??
-
-# show the ticket data
-
-# describe that some CX are activated during deployment and others registered
-# during deployment. These need to be configured before use...
-
-# show unmodified page
-
-./gradlew :client-extensions:current-tickets-custom-element:deploy
-
-# place current-tickets-custom-element on the home page
-#   remove main Grid section and add custom element in place of it
-![Edit Home Page to Add Custom Element](./edit-home-page.gif)
-# show the app, explain here it's using the ticket headless API
-# add new ticket (also control panel menu)
-# dig into the BYOF (bring your own frontend) aspect of the custom element
-# client extension
-
-# discuss style in general
-
-./gradlew :client-extensions:tickets-theme-css:deploy
-
-# optional???
-
-# add tickets-theme-css to the home page
-# discuss scope of configuration
-![Apply Theme to All Pages](./apply-theme.gif)
-# talk about the requirement for the document referral feature, adding business
-# logic, summarize OAuth2
-
-# in a separate terminal run (boiler plate logic)
-(cd client-extensions/ticket-spring-boot/ && ../../gradlew deploy bootRun)
-
-# show the route
-# demonstrate API POST with curl, wget returns 401
-# explain JWT/OAuth2
-
-# show modification to the object definition (active: true)
-./gradlew :client-extensions:ticket-batch:deploy
-# deploy idempotency
-
-# use the ticket app to add a new ticket
-# show that the spring boot route is executed
-
-# modify spring boot app with new custom ticket document referral logic
-terminate the spring boot processs
-(cd client-extensions/ticket-spring-boot/ && ../../gradlew deploy bootRun)
-
-# create a new ticket
-# demonstrate the ticket changes
-
-
 ```
 
-### Part 1
+- show new pick lists
 
-### Part 2
+### discuss object definitions
 
-### Part 3
+- deploy object definition with object action `"active": false`
+
+```bash
+./gradlew :client-extensions:ticket-batch:deploy
+```
+
+- show the new ticket object
+- describe the ticket headless API
+
+### discuss object entries (tickets)
+
+- deploy some pre-existing tickets
+
+```bash
+./gradlew :client-extensions:ticket-entry-batch:deploy
+```
+
+- show the ticket entries
+
+## Front-end
+
+- describe that some CX are activated during deployment and others registered during deployment. These need to be configured before use.
+- show unmodified page
+
+```bash
+./gradlew :client-extensions:current-tickets-custom-element:deploy
+```
+
+- place current-tickets-custom-element on the home page
+- remove main Grid section and add custom element in place of it
+  ![Edit Home Page to Add Custom Element](./edit-home-page.gif)
+- show the app, explain here it's using the ticket headless API
+- add new ticket (also control panel menu)
+- dig into the BYOF (bring your own frontend) aspect of the custom element client extension
+
+### discuss styling in general
+
+```bash
+./gradlew :client-extensions:tickets-theme-css:deploy
+```
+
+- add tickets-theme-css to the home page
+- discuss scope of configuration
+  ![Apply Theme to All Pages](./apply-theme.gif)
+
+## Business Logic
+
+- talk about the requirement for the document referral feature
+- add business logic
+- summarize OAuth2
+
+- in a separate terminal run (boiler plate logic)
+
+```bash
+(cd client-extensions/ticket-spring-boot/ && ../../gradlew deploy bootRun)
+```
+
+- show the route
+- demonstrate API POST with curl, wget returns 401
+- explain JWT/OAuth2
+
+- show modification to the object definition (active: true)
+- deploy idempotency
+
+```bash
+./gradlew :client-extensions:ticket-batch:deploy
+```
+
+- use the ticket app to add a new ticket
+- show that the spring boot route is executed
+
+- modify spring boot app with new custom ticket document referral logic
+
+- terminate the spring boot process
+
+```bash
+<ctrl-c>
+(cd client-extensions/ticket-spring-boot/ && ../../gradlew deploy bootRun)
+```
+
+- create a new ticket
+- demonstrate the ticket changes
 
 ## FAQ
