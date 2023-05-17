@@ -60,7 +60,11 @@ public class TicketRestController {
 			_log.info("JWT Subject: " + jwt.getSubject());
 
 			try {
-				_maybeQueueTicket(jwt.getTokenValue(), json);
+				JSONObject jsonObject = new JSONObject(json);
+
+				_log.info("JSON INPUT: \n\n" + jsonObject.toString(4) + "\n");
+
+				//_maybeQueueTicket(jwt.getTokenValue(), jsonObject);
 			}
 			catch (Exception exception) {
 				_log.error("JSON: " + json, exception);
@@ -70,22 +74,12 @@ public class TicketRestController {
 		return new ResponseEntity<>(json, HttpStatus.CREATED);
 	}
 
-	private void _maybeQueueTicket(String jwtToken, String json) {
-		Objects.requireNonNull(json);
-
-		JSONObject jsonObject = new JSONObject(json);
-
-		_log.info("JSON INPUT: \n\n" + jsonObject.toString(4) + "\n");
+	private void _maybeQueueTicket(String jwtToken, JSONObject jsonObject) {
+		Objects.requireNonNull(jsonObject);
 
 		JSONObject jsonTicketDTO = jsonObject.getJSONObject("objectEntryDTOTicket");
 		JSONObject jsonProperties = jsonTicketDTO.getJSONObject("properties");
 		JSONObject jsonTicketStatus = jsonProperties.getJSONObject("ticketStatus");
-
-		if (!Objects.equals(jsonTicketStatus.getString("key"), "open")) {
-			_log.info("Ticket Not OPEN. Nothing to do!");
-
-			return;
-		}
 
 		jsonTicketStatus.remove("name");
 		jsonTicketStatus.put("key", "queued");
