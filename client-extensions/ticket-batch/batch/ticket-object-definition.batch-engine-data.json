@@ -44,7 +44,7 @@
 			"objectActions": [
 				{
 					"active": false,
-					"conditionExpression": "",
+					"conditionExpression": "ticketStatus == 'open'",
 					"description": "",
 					"errorMessage": {
 					},
