@@ -1,10 +1,9 @@
 buildscript {
 	dependencies {
 		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd", version: "5.2.0"
-		classpath(group: "com.liferay", name: "com.liferay.gradle.plugins.workspace", version: "6.0.2") {
+		classpath(group: "com.liferay", name: "com.liferay.gradle.plugins.workspace", version: "6.1.2") {
 			exclude group: "biz.aQute.bnd", module: "biz.aQute.bnd"
 		}
-		classpath group: "net.saliman", name: "gradle-properties-plugin", version: "1.4.6"
 	}
 
 	repositories {
@@ -19,4 +18,5 @@ buildscript {
 }
 
 apply plugin: "com.liferay.workspace"
-apply plugin: "net.saliman.properties"
+
+System.setProperty('user.home', new File(rootProject.projectDir, '.userHomeCache').absolutePath)
