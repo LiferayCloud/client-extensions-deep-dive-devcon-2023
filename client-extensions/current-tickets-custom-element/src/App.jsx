@@ -77,6 +77,11 @@ const filters = [
 		text: 'Open issues',
 	},
 	{
+		field: 'ticketStatus',
+		value: 'queued',
+		text: 'Queued issues',
+	},
+	{
 		field: 'priority',
 		value: 'major',
 		text: 'Major Priority issues',
