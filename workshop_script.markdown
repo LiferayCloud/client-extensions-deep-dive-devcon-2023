@@ -23,6 +23,9 @@
    `cd client-extensions-deep-dive-devcon-2023`
 1. Start DXP
    `./bundles/tomcat-9.0.73/bin/catalina.(cmd|sh) run`
+1. Login to Liferay
+    Note license activation screen may show but after the license deploys it will disappear
+	After home page shows you will have to refresh the screen once before logging in
 1. Build all projects
    `./gradlew build`
 
@@ -66,6 +69,8 @@
 ./gradlew :client-extensions:current-tickets-custom-element:deploy
 
 # place current-tickets-custom-element on the home page
+#   remove main Grid section and add custom element in place of it
+![Edit Home Page to Add Custom Element](./edit-home-page.gif)
 # show the app, explain here it's using the ticket headless API
 # add new ticket (also control panel menu)
 # dig into the BYOF (bring your own frontend) aspect of the custom element
@@ -79,7 +84,7 @@
 
 # add tickets-theme-css to the home page
 # discuss scope of configuration
-
+![Apply Theme to All Pages](./apply-theme.gif)
 # talk about the requirement for the document referral feature, adding business
 # logic, summarize OAuth2
 
