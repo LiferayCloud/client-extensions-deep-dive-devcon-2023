@@ -25,7 +25,7 @@ let listTypeDefinitions = {};
 const ticketSubjects = [
  "My object definition is not deploying in my batch client extension",
  "A theme CSS client extension is not showing on my search page",
- "I wrote an instanceSettings configuration CX but it is not working",
+ "I would like to change my site's icon through a client extension",
  "When updating a custom element React app, the URL metadata is not specified correctly",
  "Liferay is not triggering my Spring Boot app from an Object Action",
  "Client Extensions are amazing - how can I learn more?"
