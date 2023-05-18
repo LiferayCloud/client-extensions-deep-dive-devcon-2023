@@ -69,7 +69,7 @@ public class TicketRestController {
 		return "READY";
 	}
 
-	@PostMapping("/ticket/object/action/1")
+	@PostMapping("/ticket/object/action/documentation/referral")
 	public ResponseEntity<String> postTicketObjectAction1(
 		@AuthenticationPrincipal Jwt jwt, @RequestBody String json) {
 
