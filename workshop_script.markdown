@@ -6,26 +6,32 @@
    https://drive.google.com/file/d/1Ni5an-vf4tPBXM6nsgJjxTyz_Vs1DMYt/view
    and upzip
 
-   OR
+   **OR**
 
-   Copy from our USB keys
+   Copy workspace from our USB keys
 
-   OR
+   **OR**
 
-   Clone repo:
-   `git clone https://github.com/LiferayCloud/client-extensions-deep-dive-devcon-2023.git`
-      TODO: add release tag
-   Setup the bundle
-      `./gradlew initBundle`
+   Clone repo: `git clone https://github.com/LiferayCloud/client-extensions-deep-dive-devcon-2023.git`
 
+   Setup the bundle `./gradlew initBundle`
+
+   **TODO:** add release tag
 
 1. Change into workspace
    `cd client-extensions-deep-dive-devcon-2023`
 1. Start DXP
-   `./bundles/tomcat-9.0.73/bin/catalina.(cmd|sh) run`
+   1. Lin/Mac:
+
+      `./bundles/tomcat-9.0.73/bin/catalina.sh run`
+   1. Win:
+
+      `.\bundles\tomcat-9.0.73\bin\catalina.bat run`
 1. Login to Liferay
-    Note license activation screen may show but after the license deploys it will disappear
-	After home page shows you will have to refresh the screen once before logging in
+
+   *Note license activation screen may show but after the license deploys it will disappear*
+
+   After home page shows you will have to refresh the screen once before logging in
 1. Build all projects
    `./gradlew build`
 
