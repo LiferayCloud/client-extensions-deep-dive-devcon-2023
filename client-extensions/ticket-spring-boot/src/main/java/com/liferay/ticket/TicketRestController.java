@@ -123,7 +123,7 @@ public class TicketRestController {
 			Page<SuggestionsContributorResults>
 				suggestionsContributorResultsPage =
 					_suggestionResource.postSuggestionsPage(
-						"https://learn.liferay.com/", "/search", 3190049L, "",
+						"", "/search", 3190049L, "",
 						1434L, "this-site", subject,
 						new SuggestionsContributorConfiguration[] {
 							suggestionsContributorConfiguration
