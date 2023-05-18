@@ -123,8 +123,8 @@ public class TicketRestController {
 			Page<SuggestionsContributorResults>
 				suggestionsContributorResultsPage =
 					_suggestionResource.postSuggestionsPage(
-						"https://learn.liferay.com/", "/search", 3190049L, "",
-						1434L, "this-site", subject,
+						"", "/search", 3190049L, "", 1434L, "this-site",
+						subject,
 						new SuggestionsContributorConfiguration[] {
 							suggestionsContributorConfiguration
 						});
@@ -151,7 +151,7 @@ public class TicketRestController {
 					link.append(":");
 					link.append(SUGGESTION_HOST);
 					link.append(assetURL);
-					link.append("\">");
+					link.append("\" target=\"_blank\">");
 					link.append(text);
 					link.append("</a>");
 
@@ -188,7 +188,7 @@ public class TicketRestController {
 		).build();
 	}
 
-private void _maybeQueueTicket(String jwtToken, JSONObject jsonObject) {
+	private void _maybeQueueTicket(String jwtToken, JSONObject jsonObject) {
 		Objects.requireNonNull(jsonObject);
 
 		JSONObject jsonTicketDTO = jsonObject.getJSONObject(
