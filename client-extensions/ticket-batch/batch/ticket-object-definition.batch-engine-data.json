@@ -49,10 +49,10 @@
 					"errorMessage": {
 					},
 					"label": {
-						"en_US": "Ticket Spring Boot Update 1"
+						"en_US": "Ticket Spring Boot Object Action Documentation Referral"
 					},
-					"name": "TicketSpringBootUpdate1",
-					"objectActionExecutorKey": "function#ticket-spring-boot-object-action-1",
+					"name": "TicketSpringBootDocumentationReferral",
+					"objectActionExecutorKey": "function#ticket-spring-boot-object-action-documenation-referral",
 					"objectActionTriggerKey": "onAfterAdd",
 					"parameters": {
 					},

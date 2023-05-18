@@ -7,13 +7,8 @@ ticket-spring-boot-oauth-application-user-agent:
     scopes:
         - C_Ticket.everything
     type: oAuthApplicationUserAgent
-ticket-spring-boot-object-action-1:
-    name: Ticket Spring Boot Object Action 1
+ticket-spring-boot-object-action-documenation-referral:
+    name: Ticket Spring Boot Object Action Documentation Referral
     oAuth2ApplicationExternalReferenceCode: ticket-spring-boot-oauth-application-user-agent
-    resourcePath: /ticket/object/action/1
-    type: objectAction
-ticket-spring-boot-object-action-2:
-    name: Ticket Spring Boot Object Action 2
-    oAuth2ApplicationExternalReferenceCode: ticket-spring-boot-oauth-application-user-agent
-    resourcePath: /ticket/object/action/2
+    resourcePath: /ticket/object/action/documentation/referral
     type: objectAction
