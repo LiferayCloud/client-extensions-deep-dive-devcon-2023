@@ -83,7 +83,7 @@ public class TicketRestController {
 
 				_log.info("JSON INPUT: \n\n" + jsonObject.toString(4) + "\n");
 
-				_maybeQueueTicket(jwt.getTokenValue(), jsonObject);
+				_addDocumentationReferralAndQueue(jwt.getTokenValue(), jsonObject);
 			}
 			catch (Exception exception) {
 				_log.error("JSON: " + json, exception);
@@ -188,7 +188,7 @@ public class TicketRestController {
 		).build();
 	}
 
-	private void _maybeQueueTicket(String jwtToken, JSONObject jsonObject) {
+	private void _addDocumentationReferralAndQueue(String jwtToken, JSONObject jsonObject) {
 		Objects.requireNonNull(jsonObject);
 
 		JSONObject jsonTicketDTO = jsonObject.getJSONObject(
