@@ -14,8 +14,7 @@ import {
 	LIST_TICKET_RESOLUTIONS,
 	LIST_TICKET_TYPES,
 } from './listTypeEntries';
-import RelativeTime from '@yaireo/relative-time'
-
+import RelativeTime from '@yaireo/relative-time';
 
 const relativeTime = new RelativeTime();
 const lorem = new LoremIpsum();
@@ -23,12 +22,12 @@ const lorem = new LoremIpsum();
 let listTypeDefinitions = {};
 
 const ticketSubjects = [
- "My object definition is not deploying in my batch client extension",
- "A theme CSS client extension is not showing on my search page",
- "I would like to change my site's icon through a client extension",
- "When updating a custom element React app, the URL metadata is not specified correctly",
- "Liferay is not triggering my Spring Boot app from an Object Action",
- "Client Extensions are amazing - how can I learn more?"
+	'My object definition is not deploying in my batch client extension',
+	'A theme CSS client extension is not showing on my search page',
+	"I would like to change my site's icon through a client extension",
+	'When updating a custom element React app, the URL metadata is not specified correctly',
+	'Liferay is not triggering my Spring Boot app from an Object Action',
+	'Client Extensions are amazing - how can I learn more?',
 ];
 
 function getRandomElement(array) {
@@ -47,7 +46,7 @@ async function addTestRow() {
 
 	await axios.post(`/o/c/tickets?p_auth=${Liferay.authToken}`, {
 		priority: {
-			key: getRandomElement(priorities).key
+			key: getRandomElement(priorities).key,
 		},
 		status: {
 			code: 0,
@@ -60,7 +59,7 @@ async function addTestRow() {
 			key: getRandomElement(regions).key,
 		},
 		ticketStatus: {
-			key: "open",
+			key: 'open',
 		},
 		type: {
 			key: getRandomElement(types).key,
@@ -289,10 +288,25 @@ function App() {
 						{recentTickets.length > 0 &&
 							recentTickets.map((recentTicket, index) => (
 								<li className="pb-2" key={index}>
-									Ticket #{recentTicket.id} (<em>{recentTicket.subject}</em>) was updated
-									with status "{recentTicket.ticketStatus}" for
-									support region {recentTicket.supportRegion} {relativeTime.from(recentTicket.dateCreated)}.
-									<div className="p-4"><em>Update:</em> <span dangerouslySetInnerHTML={{__html: recentTicket.description}} /></div>
+									Ticket #{recentTicket.id} (
+									<em>{recentTicket.subject}</em>) was updated
+									with status "{recentTicket.ticketStatus}"
+									for support region{' '}
+									{recentTicket.supportRegion}{' '}
+									{relativeTime.from(
+										recentTicket.dateCreated
+									)}
+									.
+									{recentTicket.description && (
+										<div className="p-4">
+											<em>Update:</em>{' '}
+											<span
+												dangerouslySetInnerHTML={{
+													__html: recentTicket.description,
+												}}
+											/>
+										</div>
+									)}
 								</li>
 							))}
 						{recentTickets.length === 0 && (
