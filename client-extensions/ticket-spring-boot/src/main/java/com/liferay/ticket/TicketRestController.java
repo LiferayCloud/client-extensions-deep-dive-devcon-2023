@@ -14,6 +14,14 @@
 
 package com.liferay.ticket;
 
+import com.liferay.portal.search.rest.client.dto.v1_0.Suggestion;
+import com.liferay.portal.search.rest.client.dto.v1_0.SuggestionsContributorConfiguration;
+import com.liferay.portal.search.rest.client.dto.v1_0.SuggestionsContributorResults;
+import com.liferay.portal.search.rest.client.pagination.Page;
+import com.liferay.portal.search.rest.client.resource.v1_0.SuggestionResource;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.logging.Log;
@@ -41,9 +49,20 @@ import reactor.core.publisher.Mono;
  * @author Raymond Augé
  * @author Gregory Amerson
  * @author Brian Wing Shun Chan
+ * @author Allen Ziegenfus
  */
 @RestController
 public class TicketRestController {
+
+	public static final String SUGGESTION_HOST = "learn.liferay.com";
+
+	public static final int SUGGESTION_PORT = 443;
+
+	public static final String SUGGESTION_SCHEME = "https";
+
+	public TicketRestController() {
+		_initResourceBuilders();
+	}
 
 	@GetMapping("/ready")
 	public String getReady() {
@@ -64,7 +83,7 @@ public class TicketRestController {
 
 				_log.info("JSON INPUT: \n\n" + jsonObject.toString(4) + "\n");
 
-				//_maybeQueueTicket(jwt.getTokenValue(), jsonObject);
+				_maybeQueueTicket(jwt.getTokenValue(), jsonObject);
 			}
 			catch (Exception exception) {
 				_log.error("JSON: " + json, exception);
@@ -74,18 +93,122 @@ public class TicketRestController {
 		return new ResponseEntity<>(json, HttpStatus.CREATED);
 	}
 
-	private void _maybeQueueTicket(String jwtToken, JSONObject jsonObject) {
+	private List<String> _getSuggestions(String subject) {
+		List<String> ticketSuggestions = new ArrayList<>();
+
+		SuggestionsContributorConfiguration
+			suggestionsContributorConfiguration =
+				new SuggestionsContributorConfiguration();
+
+		suggestionsContributorConfiguration.setContributorName("sxpBlueprint");
+
+		suggestionsContributorConfiguration.setDisplayGroupName(
+			"Public Nav Search Recommendations");
+
+		suggestionsContributorConfiguration.setSize(3);
+
+		JSONObject attributes = new JSONObject();
+
+		attributes.put(
+			"includeAssetSearchSummary", true
+		).put(
+			"includeassetURL", true
+		).put(
+			"sxpBlueprintId", 3628599
+		);
+
+		suggestionsContributorConfiguration.setAttributes(attributes);
+
+		try {
+			Page<SuggestionsContributorResults>
+				suggestionsContributorResultsPage =
+					_suggestionResource.postSuggestionsPage(
+						"https://learn.liferay.com/", "/search", 3190049L, "",
+						1434L, "this-site", subject,
+						new SuggestionsContributorConfiguration[] {
+							suggestionsContributorConfiguration
+						});
+
+			for (SuggestionsContributorResults suggestionsContributorResults :
+					suggestionsContributorResultsPage.getItems()) {
+
+				Suggestion[] suggestions =
+					suggestionsContributorResults.getSuggestions();
+
+				for (Suggestion suggestion : suggestions) {
+					String text = suggestion.getText();
+
+					JSONObject suggestionAttributes = new JSONObject(
+						String.valueOf(suggestion.getAttributes()));
+
+					String assetURL = (String)suggestionAttributes.get(
+						"assetURL");
+
+					StringBuilder link = new StringBuilder();
+
+					link.append("<a href=\"");
+					link.append(SUGGESTION_SCHEME);
+					link.append(":");
+					link.append(SUGGESTION_HOST);
+					link.append(assetURL);
+					link.append("\">");
+					link.append(text);
+					link.append("</a>");
+
+					ticketSuggestions.add(link.toString());
+				}
+			}
+		}
+		catch (Exception exception) {
+			if (_log.isErrorEnabled()) {
+				_log.error("Could not retrieve search suggestions", exception);
+			}
+
+			// Always return something for the purposes of the workshop
+
+			ticketSuggestions.add(
+				"<a href=\"https://learn.liferay.com\">learn.liferay.com</a>");
+		}
+
+		return ticketSuggestions;
+	}
+
+	private void _initResourceBuilders() {
+		SuggestionResource.Builder dataDefinitionResourceBuilder =
+			SuggestionResource.builder();
+
+		_suggestionResource = dataDefinitionResourceBuilder.header(
+			HttpHeaders.USER_AGENT, TicketRestController.class.getName()
+		).header(
+			HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE
+		).header(
+			HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE
+		).endpoint(
+			SUGGESTION_HOST, SUGGESTION_PORT, SUGGESTION_SCHEME
+		).build();
+	}
+
+private void _maybeQueueTicket(String jwtToken, JSONObject jsonObject) {
 		Objects.requireNonNull(jsonObject);
 
-		JSONObject jsonTicketDTO = jsonObject.getJSONObject("objectEntryDTOTicket");
+		JSONObject jsonTicketDTO = jsonObject.getJSONObject(
+			"objectEntryDTOTicket");
+
 		JSONObject jsonProperties = jsonTicketDTO.getJSONObject("properties");
-		JSONObject jsonTicketStatus = jsonProperties.getJSONObject("ticketStatus");
+
+		JSONObject jsonTicketStatus = jsonProperties.getJSONObject(
+			"ticketStatus");
+
+		String description = jsonProperties.getString("description");
+		String subject = jsonProperties.getString("subject");
 
 		jsonTicketStatus.remove("name");
 		jsonTicketStatus.put("key", "queued");
 		jsonProperties.put(
 			"description",
-			jsonProperties.getString("description") + "<br/>MORE DEAILS!!!");
+			description +
+				"Here are some suggestions for resources re: this ticket: " +
+					String.join(", ", _getSuggestions(subject)));
 
 		_log.info("JSON OUTPUT: \n\n" + jsonProperties.toString(4) + "\n");
 
@@ -139,5 +262,7 @@ public class TicketRestController {
 
 	@Value("${com.liferay.lxc.dxp.server.protocol}")
 	private String _lxcDXPServerProtocol;
+
+	private SuggestionResource _suggestionResource;
 
 }
