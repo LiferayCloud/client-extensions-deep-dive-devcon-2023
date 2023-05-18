@@ -5,7 +5,7 @@
 			"deploy": false
 		}
 	},
-	"id": "ticketsringboot",
+	"id": "ticketspringboot",
 	"kind": "Deployment",
 	"livenessProbe": {
 		"httpGet": {
