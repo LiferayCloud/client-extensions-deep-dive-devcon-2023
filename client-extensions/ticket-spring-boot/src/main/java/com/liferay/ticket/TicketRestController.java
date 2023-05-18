@@ -151,7 +151,7 @@ public class TicketRestController {
 					link.append(":");
 					link.append(SUGGESTION_HOST);
 					link.append(assetURL);
-					link.append("\">");
+					link.append("\" target=\"_blank\">");
 					link.append(text);
 					link.append("</a>");
 
