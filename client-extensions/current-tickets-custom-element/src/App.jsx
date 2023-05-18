@@ -22,8 +22,17 @@ const lorem = new LoremIpsum();
 
 let listTypeDefinitions = {};
 
+const ticketSubjects = [
+ "My object definition is not deploying in my batch client extension",
+ "A theme CSS client extension is not showing on my search page",
+ "I wrote an instanceSettings configuration CX but it is not working",
+ "When updating a custom element React app, the URL metadata is not specified correctly",
+ "Liferay is not triggering my Spring Boot app from an Object Action",
+ "Client Extensions are amazing - how can I learn more?"
+];
+
 function getRandomElement(array) {
-	return array[Math.floor(Math.random() * array.length)].key;
+	return array[Math.floor(Math.random() * array.length)];
 }
 
 async function addTestRow() {
@@ -38,23 +47,23 @@ async function addTestRow() {
 
 	await axios.post(`/o/c/tickets?p_auth=${Liferay.authToken}`, {
 		priority: {
-			key: getRandomElement(priorities),
+			key: getRandomElement(priorities).key
 		},
 		status: {
 			code: 0,
 		},
 		resolution: {
-			key: getRandomElement(resolutions),
+			key: getRandomElement(resolutions).key,
 		},
-		subject: lorem.generateWords(8),
+		subject: getRandomElement(ticketSubjects),
 		supportRegion: {
-			key: getRandomElement(regions),
+			key: getRandomElement(regions).key,
 		},
 		ticketStatus: {
 			key: "open",
 		},
 		type: {
-			key: getRandomElement(types),
+			key: getRandomElement(types).key,
 		},
 	});
 }
@@ -279,10 +288,11 @@ function App() {
 					<ul>
 						{recentTickets.length > 0 &&
 							recentTickets.map((recentTicket, index) => (
-								<li key={index}>
-									Ticket #{recentTicket.id} was updated
-									with status "{recentTicket.ticketStatus}" and description "{recentTicket.description}" for
+								<li className="pb-2" key={index}>
+									Ticket #{recentTicket.id} (<em>{recentTicket.subject}</em>) was updated
+									with status "{recentTicket.ticketStatus}" for
 									support region {recentTicket.supportRegion} {relativeTime.from(recentTicket.dateCreated)}.
+									<div className="p-4"><em>Update:</em> <span dangerouslySetInnerHTML={{__html: recentTicket.description}} /></div>
 								</li>
 							))}
 						{recentTickets.length === 0 && (
