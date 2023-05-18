@@ -5,13 +5,14 @@ import sass from 'sass-embedded';
 
 const browserSyncInstance = browserSync.create();
 const gulpSassInstance = gulpSass(sass);
+const themeBuildDir = './build/buildTheme';
 
 gulp.task('copy:html', () => {
-	return gulp.src('index.html').pipe(gulp.dest('build'));
+	return gulp.src('index.html').pipe(gulp.dest(themeBuildDir));
 });
 
 gulp.task('copy:src', () => {
-	return gulp.src('src/**/*').pipe(gulp.dest('build/buildTheme'));
+	return gulp.src('src/**/*').pipe(gulp.dest(themeBuildDir));
 });
 
 function compileSass(cssFile) {
@@ -26,18 +27,18 @@ function compileSass(cssFile) {
 				],
 			}).on('error', gulpSassInstance.logError)
 		)
-		.pipe(gulp.dest('build/css'))
+		.pipe(gulp.dest(`${themeBuildDir}/css`))
 		.pipe(browserSyncInstance.stream());
 }
 
 gulp.task(
 	'clay:css',
-	gulp.series('copy:src', () => compileSass('build/buildTheme/css/clay.scss'))
+	gulp.series('copy:src', () => compileSass(`${themeBuildDir}/css/clay.scss`))
 );
 
 gulp.task(
 	'main:css',
-	gulp.series('copy:src', () => compileSass('build/buildTheme/css/main.scss'))
+	gulp.series('copy:src', () => compileSass(`${themeBuildDir}/css/main.scss`))
 );
 
 gulp.task(
@@ -46,7 +47,7 @@ gulp.task(
 		browserSyncInstance.init({
 			notify: false,
 			open: false,
-			server: './build',
+			server: themeBuildDir,
 			socket: {
 				domain: 'localhost:3000',
 			},
