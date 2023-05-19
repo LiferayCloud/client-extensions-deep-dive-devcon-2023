@@ -1,0 +1,9 @@
+assemble:
+    - fromTask: bootJar
+ticket-cleanup-oauth-application-headless-server:
+    .serviceAddress: localhost:8080
+    .serviceScheme: http
+    name: Ticket Cleanup Oauth Application Headless Server
+    scopes:
+        - C_Ticket.everything
+    type: oAuthApplicationHeadlessServer
