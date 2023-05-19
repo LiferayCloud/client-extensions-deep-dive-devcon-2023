@@ -178,7 +178,10 @@ We created the first ticket by hand, but in the scenario where you have preexist
 ```
 
 - demonstrate API POST with curl, wget returns 401
-   ```curl -v -X POST http://localhost:58081/ticket/object/action/documentation/referral```
+
+```bash
+curl -v -X POST http://localhost:58081/ticket/object/action/documentation/referral
+```
 
 - use the ticket app to add a new ticket
 - show that the spring boot route is executed
