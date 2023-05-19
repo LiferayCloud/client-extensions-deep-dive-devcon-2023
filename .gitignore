@@ -13,6 +13,7 @@
 **/test-coverage
 **/tmp
 **/.web_bundle_build
+.DS_Store
 .gradle
 .idea
 .userHomeCache/
