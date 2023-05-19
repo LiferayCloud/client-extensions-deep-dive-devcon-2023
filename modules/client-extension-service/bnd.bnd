@@ -1,0 +1,3 @@
+Bundle-Name: Liferay Client Extension Service
+Bundle-SymbolicName: com.liferay.client.extension.service.override
+Bundle-Version: 1.0.0
