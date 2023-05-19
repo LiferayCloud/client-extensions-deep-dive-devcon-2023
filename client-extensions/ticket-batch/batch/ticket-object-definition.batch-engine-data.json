@@ -52,7 +52,7 @@
 						"en_US": "Ticket Spring Boot Object Action Documentation Referral"
 					},
 					"name": "TicketSpringBootDocumentationReferral",
-					"objectActionExecutorKey": "function#ticket-spring-boot-object-action-documenation-referral",
+					"objectActionExecutorKey": "function#ticket-spring-boot-object-action-documentation-referral",
 					"objectActionTriggerKey": "onAfterAdd",
 					"parameters": {
 					},
