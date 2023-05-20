@@ -56,9 +56,9 @@ public class TicketRestController {
 
 				_log.info("JSON INPUT: \n\n" + jsonObject.toString(4) + "\n");
 
-//				_documentationReferral.addDocumentationReferralAndQueue(
-//					_lxcDXPServerProtocol, _lxcDXPMainDomain,
-//					jwt.getTokenValue(), jsonObject);
+				_documentationReferral.addDocumentationReferralAndQueue(
+					_lxcDXPServerProtocol, _lxcDXPMainDomain,
+					jwt.getTokenValue(), jsonObject);
 			}
 			catch (Exception exception) {
 				_log.error("JSON: " + json, exception);

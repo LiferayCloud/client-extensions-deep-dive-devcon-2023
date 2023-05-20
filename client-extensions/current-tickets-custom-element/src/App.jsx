@@ -123,15 +123,22 @@ function App() {
 
 		setTotalCount(data.totalCount);
 		setTickets(
-			data?.items.map((ticket) => ({
-				priority: ticket.priority?.name,
-				description: ticket.description,
-				resolution: ticket.resolution?.name,
-				subject: ticket.subject,
-				supportRegion: ticket.supportRegion?.name,
-				ticketStatus: ticket.ticketStatus?.name,
-				type: ticket.type?.name,
-			}))
+			data?.items.map((ticket) => {
+				let suggestions = [];
+				try {
+					suggestions = JSON.parse(ticket?.suggestions);
+				} catch (error) {}
+				return {
+					priority: ticket.priority?.name,
+					description: ticket.description,
+					resolution: ticket.resolution?.name,
+					subject: ticket.subject,
+					supportRegion: ticket.supportRegion?.name,
+					ticketStatus: ticket.ticketStatus?.name,
+					type: ticket.type?.name,
+					suggestions,
+				};
+			})
 		);
 	}
 
@@ -141,18 +148,26 @@ function App() {
 		);
 
 		setRecentTickets(
-			data?.items.map((row) => ({
-				dateCreated: new Date(row.dateCreated),
-				dateModified: new Date(row.dateModified),
-				description: row.description,
-				id: row.id,
-				priority: row.priority?.name,
-				resolution: row.resolution?.name,
-				subject: row.subject,
-				supportRegion: row.supportRegion?.name,
-				ticketStatus: row.ticketStatus?.name,
-				type: row.type?.name,
-			}))
+			data?.items.map((ticket) => {
+				let suggestions = [];
+				try {
+					suggestions = JSON.parse(ticket?.suggestions);
+				} catch (error) {}
+
+				return {
+					dateCreated: new Date(ticket.dateCreated),
+					dateModified: new Date(ticket.dateModified),
+					description: ticket.description,
+					id: ticket.id,
+					priority: ticket.priority?.name,
+					resolution: ticket.resolution?.name,
+					subject: ticket.subject,
+					supportRegion: ticket.supportRegion?.name,
+					ticketStatus: ticket.ticketStatus?.name,
+					type: ticket.type?.name,
+					suggestions,
+				};
+			})
 		);
 	}
 
@@ -297,14 +312,27 @@ function App() {
 										recentTicket.dateCreated
 									)}
 									.
-									{recentTicket.description && (
-										<div className="p-4">
-											<em>Update:</em>{' '}
-											<span
-												dangerouslySetInnerHTML={{
-													__html: recentTicket.description,
-												}}
-											/>
+									{recentTicket.suggestions && (
+										<div className="m-2 p-2">
+											<em>Update:</em> Here are some
+											suggestions for resources re: this
+											ticket:&nbsp;
+											{recentTicket.suggestions.map(
+												(suggestion, index) => (
+													<span key={index}>
+														<a
+															key={index}
+															href={
+																suggestion.assetURL
+															}
+															target='_blank'
+														>
+															{suggestion.text}
+														</a>
+														,&nbsp;
+													</span>
+												)
+											)}
 										</div>
 									)}
 								</li>
