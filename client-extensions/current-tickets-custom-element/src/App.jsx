@@ -5,6 +5,7 @@ import axios from 'axios';
 import DataGrid from 'react-data-grid';
 import {LoremIpsum} from 'lorem-ipsum';
 import ClayAlert from '@clayui/alert';
+import ClayIcon from '@clayui/icon';
 import {ClayPaginationBarWithBasicItems} from '@clayui/pagination-bar';
 import {
 	fetchListTypeDefinitions,
@@ -180,13 +181,46 @@ function App() {
 	}, []);
 
 	const columns = [
-		{key: 'subject', name: 'Subject', width: '30%'},
-		{key: 'description', name: 'Descr.', width: '15%'},
-		{key: 'resolution', name: 'Resolution', width: '15%'},
-		{key: 'ticketStatus', name: 'Status', width: '10%'},
-		{key: 'priority', name: 'Priority', width: '10%'},
-		{key: 'type', name: 'Type', width: '10%'},
-		{key: 'supportRegion', name: 'Region', width: '10%'},
+		{
+			key: 'subject',
+			name: 'Subject',
+			resizable: true,
+			width: '45%',
+			formatter: ({row}) => (
+				<span>
+					{row.suggestions && row.suggestions.length > 0 && (
+						<ClayIcon
+							className="mr-1"
+							spritemap={Liferay.Icons.spritemap}
+							symbol="link"
+						/>
+					)}
+					{row.subject}
+				</span>
+			),
+		},
+		{key: 'resolution', name: 'Resolution', resizable: true, width: '15%'},
+		{
+			key: 'ticketStatus',
+			name: 'Status',
+			resizable: true,
+			width: '15%',
+			formatter: ({row}) => (
+				<span>
+					{row.ticketStatus === 'Queued' && (
+						<ClayIcon
+							className="mr-1"
+							spritemap={Liferay.Icons.spritemap}
+							symbol="bolt"
+						/>
+					)}
+					{row.ticketStatus}
+				</span>
+			),
+		},
+		{key: 'priority', name: 'Priority', resizable: true, width: '10%'},
+		{key: 'type', name: 'Type', resizable: true, width: '10%'},
+		{key: 'supportRegion', name: 'Region', resizable: true, width: '10%'},
 	];
 
 	return (
@@ -325,7 +359,7 @@ function App() {
 															href={
 																suggestion.assetURL
 															}
-															target='_blank'
+															target="_blank"
 														>
 															{suggestion.text}
 														</a>
