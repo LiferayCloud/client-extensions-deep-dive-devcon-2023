@@ -228,7 +228,7 @@ function App() {
 							event.preventDefault();
 						}}
 					>
-						Create a New Ticket
+						Generate a New Ticket
 					</button>
 				</header>
 				<main className="row p-0">
