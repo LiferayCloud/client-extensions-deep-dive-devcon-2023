@@ -346,29 +346,32 @@ function App() {
 										recentTicket.dateCreated
 									)}
 									.
-									{recentTicket.suggestions && (
-										<div className="m-2 p-2">
-											<em>Update:</em> Here are some
-											suggestions for resources re: this
-											ticket:&nbsp;
-											{recentTicket.suggestions.map(
-												(suggestion, index) => (
-													<span key={index}>
-														<a
-															key={index}
-															href={
-																suggestion.assetURL
-															}
-															target="_blank"
-														>
-															{suggestion.text}
-														</a>
-														,&nbsp;
-													</span>
-												)
-											)}
-										</div>
-									)}
+									{recentTicket.suggestions &&
+										recentTicket.suggestions.length > 0 && (
+											<div className="m-2 p-2">
+												<em>Update:</em> Here are some
+												suggestions for resources re:
+												this ticket:&nbsp;
+												{recentTicket.suggestions.map(
+													(suggestion, index) => (
+														<span key={index}>
+															<a
+																key={index}
+																href={
+																	suggestion.assetURL
+																}
+																target="_blank"
+															>
+																{
+																	suggestion.text
+																}
+															</a>
+															,&nbsp;
+														</span>
+													)
+												)}
+											</div>
+										)}
 								</li>
 							))}
 						{recentTickets.length === 0 && (
