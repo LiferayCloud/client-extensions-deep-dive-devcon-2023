@@ -1,6 +1,7 @@
 {
 	"dependencies": {
 		"@clayui/alert": "^3.93.0",
+		"@clayui/icon": "^3.56.0",
 		"@clayui/pagination": "^3.94.0",
 		"@clayui/pagination-bar": "^3.94.0",
 		"@yaireo/relative-time": "^1.0.3",
