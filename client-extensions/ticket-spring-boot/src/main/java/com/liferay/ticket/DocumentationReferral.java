@@ -14,24 +14,25 @@
 
 package com.liferay.ticket;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.json.JSONObject;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
-
 import com.liferay.portal.search.rest.client.dto.v1_0.Suggestion;
 import com.liferay.portal.search.rest.client.dto.v1_0.SuggestionsContributorConfiguration;
 import com.liferay.portal.search.rest.client.dto.v1_0.SuggestionsContributorResults;
 import com.liferay.portal.search.rest.client.pagination.Page;
 import com.liferay.portal.search.rest.client.resource.v1_0.SuggestionResource;
+
+import java.util.Objects;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import reactor.core.publisher.Mono;
 
@@ -66,16 +67,11 @@ public class DocumentationReferral {
 		JSONObject jsonTicketStatus = jsonProperties.getJSONObject(
 			"ticketStatus");
 
-		String description = jsonProperties.getString("description");
 		String subject = jsonProperties.getString("subject");
 
 		jsonTicketStatus.remove("name");
 		jsonTicketStatus.put("key", "queued");
-		jsonProperties.put(
-			"description",
-			description +
-				"Here are some suggestions for resources re: this ticket: " +
-					String.join(", ", _getSuggestions(subject)));
+		jsonProperties.put("suggestions", _getSuggestionsJSON(subject));
 
 		_log.info("JSON OUTPUT: \n\n" + jsonProperties.toString(4) + "\n");
 
@@ -121,8 +117,8 @@ public class DocumentationReferral {
 		).subscribe();
 	}
 
-	private List<String> _getSuggestions(String subject) {
-		List<String> ticketSuggestions = new ArrayList<>();
+	private String _getSuggestionsJSON(String subject) {
+		JSONArray suggestionsJSONArray = new JSONArray();
 
 		SuggestionsContributorConfiguration
 			suggestionsContributorConfiguration =
@@ -151,8 +147,8 @@ public class DocumentationReferral {
 			Page<SuggestionsContributorResults>
 				suggestionsContributorResultsPage =
 					_suggestionResource.postSuggestionsPage(
-						SUGGESTION_SCHEME + "://" + SUGGESTION_HOST, "/search", 3190049L, "",
-						1434L, "this-site", subject,
+						SUGGESTION_SCHEME + "://" + SUGGESTION_HOST, "/search",
+						3190049L, "", 1434L, "this-site", subject,
 						new SuggestionsContributorConfiguration[] {
 							suggestionsContributorConfiguration
 						});
@@ -172,18 +168,15 @@ public class DocumentationReferral {
 					String assetURL = (String)suggestionAttributes.get(
 						"assetURL");
 
-					StringBuilder link = new StringBuilder();
+					JSONObject suggestionJSONObject = new JSONObject();
 
-					link.append("<a href=\"");
-					link.append(SUGGESTION_SCHEME);
-					link.append(":");
-					link.append(SUGGESTION_HOST);
-					link.append(assetURL);
-					link.append("\">");
-					link.append(text);
-					link.append("</a>");
-
-					ticketSuggestions.add(link.toString());
+					suggestionJSONObject.put(
+						"assetURL",
+						SUGGESTION_SCHEME + "://" + SUGGESTION_HOST + assetURL
+					).put(
+						"text", text
+					);
+					suggestionsJSONArray.put(suggestionJSONObject);
 				}
 			}
 		}
@@ -194,11 +187,17 @@ public class DocumentationReferral {
 
 			// Always return something for the purposes of the workshop
 
-			ticketSuggestions.add(
-				"<a href=\"https://learn.liferay.com\">learn.liferay.com</a>");
+			JSONObject suggestionJSONObject = new JSONObject();
+
+			suggestionJSONObject.put(
+				"assetURL", SUGGESTION_SCHEME + "://" + SUGGESTION_HOST
+			).put(
+				"text", "learn.liferay.com"
+			);
+			suggestionsJSONArray.put(suggestionJSONObject);
 		}
 
-		return ticketSuggestions;
+		return suggestionsJSONArray.toString();
 	}
 
 	private void _initResourceBuilders() {
