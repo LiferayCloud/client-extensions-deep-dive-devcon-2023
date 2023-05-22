@@ -20,6 +20,8 @@ import com.liferay.portal.search.rest.client.dto.v1_0.SuggestionsContributorResu
 import com.liferay.portal.search.rest.client.pagination.Page;
 import com.liferay.portal.search.rest.client.resource.v1_0.SuggestionResource;
 
+import java.time.Duration;
+
 import java.util.Objects;
 
 import org.apache.commons.logging.Log;
@@ -35,6 +37,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import reactor.core.publisher.Mono;
+
+import reactor.util.retry.Retry;
 
 /**
  * @author Raymond Augé
@@ -99,8 +103,11 @@ public class DocumentationReferral {
 				if (httpStatus.is2xxSuccessful()) {
 					return clientResponse.bodyToMono(String.class);
 				}
-				else if (httpStatus.is4xxClientError()) {
-					return Mono.just(httpStatus.getReasonPhrase());
+
+				if (httpStatus.is4xxClientError()) {
+					if (_log.isInfoEnabled()) {
+						_log.info("Output: " + httpStatus.getReasonPhrase());
+					}
 				}
 
 				Mono<WebClientResponseException> mono =
@@ -108,6 +115,12 @@ public class DocumentationReferral {
 
 				return mono.flatMap(Mono::error);
 			}
+		).retryWhen(
+			Retry.backoff(
+				3, Duration.ofSeconds(1)
+			).doAfterRetry(
+				retrySignal -> _log.info("Retrying request")
+			)
 		).doOnNext(
 			output -> {
 				if (_log.isInfoEnabled()) {
