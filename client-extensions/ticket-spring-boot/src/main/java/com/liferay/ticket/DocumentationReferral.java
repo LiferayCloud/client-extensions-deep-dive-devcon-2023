@@ -103,8 +103,7 @@ public class DocumentationReferral {
 				if (httpStatus.is2xxSuccessful()) {
 					return clientResponse.bodyToMono(String.class);
 				}
-
-				if (httpStatus.is4xxClientError()) {
+				else if (httpStatus.is4xxClientError()) {
 					if (_log.isInfoEnabled()) {
 						_log.info("Output: " + httpStatus.getReasonPhrase());
 					}
