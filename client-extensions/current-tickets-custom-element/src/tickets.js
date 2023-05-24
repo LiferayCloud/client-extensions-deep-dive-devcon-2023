@@ -1,16 +1,16 @@
 import axios from 'axios';
 import {useQuery} from 'react-query';
+
 import {
-	fetchListTypeDefinitions,
 	LIST_TICKET_PRIORITIES,
 	LIST_TICKET_REGIONS,
 	LIST_TICKET_RESOLUTIONS,
 	LIST_TICKET_TYPES,
+	fetchListTypeDefinitions,
 } from './listTypeEntries';
 
-
-export const fetchTickets = async ({queryKey}) => {
-	const [, {page, pageSize, filter, search}] = queryKey;
+export async function fetchTickets({queryKey}) {
+	const [, {filter, page, pageSize, search}] = queryKey;
 	const filterSnippet =
 		filter && filter.field && filter.value
 			? encodeURI(`&filter=${filter.field} eq '${filter.value}'`)
@@ -19,16 +19,17 @@ export const fetchTickets = async ({queryKey}) => {
 	const {data} = await axios.get(
 		`/o/c/tickets?p_auth=${Liferay.authToken}&pageSize=${pageSize}&sort=dateModified:desc&page=${page}${filterSnippet}${searchSnippet}`
 	);
-	return data;
-};
 
-export const fetchRecentTickets = async () => {
+	return data;
+}
+
+export async function fetchRecentTickets() {
 	const {data} = await axios.get(
 		`/o/c/tickets?p_auth=${Liferay.authToken}&pageSize=3&page=1&sort=dateModified:desc`
 	);
-	return data;
-};
 
+	return data;
+}
 
 let listTypeDefinitions = {};
 
@@ -45,7 +46,7 @@ function getRandomElement(array) {
 	return array[Math.floor(Math.random() * array.length)];
 }
 
-export const generateNewTicket = async() => {
+export async function generateNewTicket() {
 	if (!(LIST_TICKET_PRIORITIES in listTypeDefinitions)) {
 		listTypeDefinitions = await fetchListTypeDefinitions();
 	}
@@ -58,11 +59,11 @@ export const generateNewTicket = async() => {
 		priority: {
 			key: getRandomElement(priorities).key,
 		},
-		status: {
-			code: 0,
-		},
 		resolution: {
 			key: getRandomElement(resolutions).key,
+		},
+		status: {
+			code: 0,
 		},
 		subject: getRandomElement(ticketSubjects),
 		supportRegion: {
@@ -77,7 +78,7 @@ export const generateNewTicket = async() => {
 	});
 }
 
-export const useRecentTickets = () => {
+export function useRecentTickets() {
 	const recentTickets = useQuery(['recentTickets'], fetchRecentTickets, {
 		refetchInterval: 5000,
 		refetchOnMount: false,
@@ -88,7 +89,8 @@ export const useRecentTickets = () => {
 			let suggestions = [];
 			try {
 				suggestions = JSON.parse(ticket?.suggestions);
-			} catch (error) {}
+			}
+			catch (error) {}
 
 			return {
 				dateCreated: new Date(ticket.dateCreated),
@@ -98,16 +100,16 @@ export const useRecentTickets = () => {
 				priority: ticket.priority?.name,
 				resolution: ticket.resolution?.name,
 				subject: ticket.subject,
+				suggestions,
 				supportRegion: ticket.supportRegion?.name,
 				ticketStatus: ticket.ticketStatus?.name,
 				type: ticket.type?.name,
-				suggestions,
 			};
 		});
 	}
+
 	return [];
 }
-
 
 /* Return ticket data from a closure. using React state was leading to too many rerenders
    or flickering of ui components */
@@ -128,7 +130,9 @@ export const useTickets = (() => {
 					let suggestions = [];
 					try {
 						suggestions = JSON.parse(ticket?.suggestions);
-					} catch (error) {}
+					}
+					catch (error) {}
+
 					return {
 						priority: ticket.priority?.name,
 						description: ticket.description,
@@ -143,7 +147,9 @@ export const useTickets = (() => {
 				}),
 			};
 		}
+
 		return ticketData;
 	};
+
 	return useTicketsInner;
 })();
