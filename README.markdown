@@ -7,7 +7,7 @@ these steps before the workshop!</em>
 
 <em>If you'd like help with these commands you can reach out on this Liferay community Slack channel: [#devcon-2023-client-extensions-101-workshop](https://liferay-community.slack.com/archives/C058EQJ0MFG)</em>
 
-1. Download [deep-dive-workspace.zip](https://drive.google.com/file/d/1Ni5an-vf4tPBXM6nsgJjxTyz_Vs1DMYt/view) and unzip
+1. Download [client-extensions-deep-dive-devcon-2023.tar.gz](https://drive.google.com/uc?id=1_WnztbRVFcmo94F9zs4pHWi3_uEF73GU&export=download) and unzip
 
    **OR**
 
