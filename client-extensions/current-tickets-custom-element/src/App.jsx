@@ -1,9 +1,9 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
+import {useMutation, useQuery} from 'react-query';
 import './App.css';
 import 'react-data-grid/lib/styles.css';
 import axios from 'axios';
 import DataGrid from 'react-data-grid';
-import {LoremIpsum} from 'lorem-ipsum';
 import ClayAlert from '@clayui/alert';
 import ClayIcon from '@clayui/icon';
 import {ClayPaginationBarWithBasicItems} from '@clayui/pagination-bar';
@@ -11,14 +11,12 @@ import {
 	fetchListTypeDefinitions,
 	LIST_TICKET_PRIORITIES,
 	LIST_TICKET_REGIONS,
-	LIST_TICKET_STATUSES,
 	LIST_TICKET_RESOLUTIONS,
 	LIST_TICKET_TYPES,
 } from './listTypeEntries';
 import RelativeTime from '@yaireo/relative-time';
 
 const relativeTime = new RelativeTime();
-const lorem = new LoremIpsum();
 
 let listTypeDefinitions = {};
 
@@ -35,17 +33,16 @@ function getRandomElement(array) {
 	return array[Math.floor(Math.random() * array.length)];
 }
 
-async function addTestRow() {
+async function generateNewTicket() {
 	if (!(LIST_TICKET_PRIORITIES in listTypeDefinitions)) {
 		listTypeDefinitions = await fetchListTypeDefinitions();
 	}
 	const priorities = listTypeDefinitions[LIST_TICKET_PRIORITIES];
-	const statuses = listTypeDefinitions[LIST_TICKET_STATUSES];
 	const regions = listTypeDefinitions[LIST_TICKET_REGIONS];
 	const resolutions = listTypeDefinitions[LIST_TICKET_RESOLUTIONS];
 	const types = listTypeDefinitions[LIST_TICKET_TYPES];
 
-	await axios.post(`/o/c/tickets?p_auth=${Liferay.authToken}`, {
+	return axios.post(`/o/c/tickets?p_auth=${Liferay.authToken}`, {
 		priority: {
 			key: getRandomElement(priorities).key,
 		},
@@ -102,83 +99,117 @@ const filters = [
 	},
 ];
 
-function App() {
-	const [tickets, setTickets] = useState([]);
-	const [recentTickets, setRecentTickets] = useState([]);
+const fetchRecentTickets = async () => {
+	const {data} = await axios.get(
+		`/o/c/tickets?p_auth=${Liferay.authToken}&pageSize=3&page=1&sort=dateModified:desc`
+	);
+	return data;
+};
+
+function useRecentTickets() {
+	const recentTickets = useQuery(['recentTickets'], fetchRecentTickets, {
+		refetchInterval: 5000,
+		refetchOnMount: false,
+	});
+
+	if (recentTickets.isSuccess) {
+		return recentTickets.data?.items.map((ticket) => {
+			let suggestions = [];
+			try {
+				suggestions = JSON.parse(ticket?.suggestions);
+			} catch (error) {}
+
+			return {
+				dateCreated: new Date(ticket.dateCreated),
+				dateModified: new Date(ticket.dateModified),
+				description: ticket.description,
+				id: ticket.id,
+				priority: ticket.priority?.name,
+				resolution: ticket.resolution?.name,
+				subject: ticket.subject,
+				supportRegion: ticket.supportRegion?.name,
+				ticketStatus: ticket.ticketStatus?.name,
+				type: ticket.type?.name,
+				suggestions,
+			};
+		});
+	}
+	return [];
+}
+
+const fetchTickets = async ({queryKey}) => {
+	const [, {page, pageSize, filter, search}] = queryKey;
+	const filterSnippet =
+		filter && filter.field && filter.value
+			? encodeURI(`&filter=${filter.field} eq '${filter.value}'`)
+			: '';
+	const searchSnippet = search ? encodeURI(`&search=${search}`) : '';
+	const {data} = await axios.get(
+		`/o/c/tickets?p_auth=${Liferay.authToken}&pageSize=${pageSize}&sort=dateModified:desc&page=${page}${filterSnippet}${searchSnippet}`
+	);
+	return data;
+};
+
+/* Return ticket data from a closure. using React state was leading to too many rerenders
+   or flickering of ui components */
+const useTickets = (() => {
+	let ticketData = {rows: [], totalCount: 0};
+
+	const useTicketsInner = (page, pageSize, filter, search) => {
+		const tickets = useQuery(
+			['tickets', {page, pageSize, filter, search}],
+			fetchTickets,
+			{refetchInterval: 5000, refetchOnMount: false}
+		);
+
+		if (tickets.isSuccess) {
+			ticketData = {
+				totalCount: tickets?.data?.totalCount,
+				rows: tickets?.data?.items?.map((ticket) => {
+					let suggestions = [];
+					try {
+						suggestions = JSON.parse(ticket?.suggestions);
+					} catch (error) {}
+					return {
+						priority: ticket.priority?.name,
+						description: ticket.description,
+						resolution: ticket.resolution?.name,
+						id: ticket.id,
+						subject: ticket.subject,
+						supportRegion: ticket.supportRegion?.name,
+						ticketStatus: ticket.ticketStatus?.name,
+						type: ticket.type?.name,
+						suggestions,
+					};
+				}),
+			};
+		}
+		return ticketData;
+	};
+	return useTicketsInner;
+})();
+
+function App({queryClient}) {
 	const [filter, setFilter] = useState(initialFilterState);
 	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState(20);
 	const [search, setSearch] = useState();
-	const [totalCount, setTotalCount] = useState(0);
 	const [toastMessage, setToastMessage] = useState(initialToastState);
 
-	async function fetchTickets() {
-		const filterSnippet =
-			filter && filter.field && filter.value
-				? encodeURI(`&filter=${filter.field} eq '${filter.value}'`)
-				: '';
-		const searchSnippet = search ? encodeURI(`&search=${search}`) : '';
-		const {data} = await axios.get(
-			`/o/c/tickets?p_auth=${Liferay.authToken}&pageSize=${pageSize}&page=${page}${filterSnippet}${searchSnippet}`
-		);
+	const tickets = useTickets(page, pageSize, filter, search);
 
-		setTotalCount(data.totalCount);
-		setTickets(
-			data?.items.map((ticket) => {
-				let suggestions = [];
-				try {
-					suggestions = JSON.parse(ticket?.suggestions);
-				} catch (error) {}
-				return {
-					priority: ticket.priority?.name,
-					description: ticket.description,
-					resolution: ticket.resolution?.name,
-					subject: ticket.subject,
-					supportRegion: ticket.supportRegion?.name,
-					ticketStatus: ticket.ticketStatus?.name,
-					type: ticket.type?.name,
-					suggestions,
-				};
-			})
-		);
-	}
-
-	async function fetchRecentTickets() {
-		const {data} = await axios.get(
-			`/o/c/tickets?p_auth=${Liferay.authToken}&pageSize=3&page=1&sort=dateModified:desc`
-		);
-
-		setRecentTickets(
-			data?.items.map((ticket) => {
-				let suggestions = [];
-				try {
-					suggestions = JSON.parse(ticket?.suggestions);
-				} catch (error) {}
-
-				return {
-					dateCreated: new Date(ticket.dateCreated),
-					dateModified: new Date(ticket.dateModified),
-					description: ticket.description,
-					id: ticket.id,
-					priority: ticket.priority?.name,
-					resolution: ticket.resolution?.name,
-					subject: ticket.subject,
-					supportRegion: ticket.supportRegion?.name,
-					ticketStatus: ticket.ticketStatus?.name,
-					type: ticket.type?.name,
-					suggestions,
-				};
-			})
-		);
-	}
-
-	useEffect(() => {
-		fetchTickets();
-	}, [page, pageSize, filter, search]);
-
-	useEffect(() => {
-		fetchRecentTickets();
-	}, []);
+	const mutation = useMutation({
+		mutationFn: generateNewTicket,
+		onSuccess: () => {
+			queryClient.invalidateQueries();
+			setToastMessage({
+				content: 'A new ticket was added!',
+				show: true,
+				type: 'success',
+			});
+		},
+	});
+	const recentTickets = useRecentTickets();
 
 	const columns = [
 		{
@@ -230,13 +261,13 @@ function App() {
 					<h6 className="text-uppercase">Site</h6>
 					<ul>
 						<li>
-							<a href="">Dashboards</a>
+							<a href="/">Dashboards</a>
 						</li>
 						<li>
-							<a href="">Projects</a>
+							<a href="/">Projects</a>
 						</li>
 						<li>
-							<a href="">Issues</a>
+							<a href="/">Issues</a>
 						</li>
 					</ul>
 				</nav>
@@ -247,18 +278,8 @@ function App() {
 					<button
 						className="btn btn-primary ml-auto"
 						onClick={(event) => {
-							async function createNewTicket() {
-								await addTestRow();
-								fetchTickets();
-								fetchRecentTickets();
+							mutation.mutate();
 
-								setToastMessage({
-									content: 'A new ticket was added!',
-									show: true,
-									type: 'success',
-								});
-							}
-							createNewTicket();
 							event.preventDefault();
 						}}
 					>
@@ -273,16 +294,17 @@ function App() {
 							type="text"
 							onChange={(event) => {
 								setSearch(event.target.value);
+								setPage(1);
 							}}
 						></input>
+
 						<DataGrid
 							columns={columns}
-							rows={tickets}
-							onRowsChange={setTickets}
+							rows={tickets.rows}
+							rowKeyGetter={(row) => row.id}
 						/>
 						<div className="my-3">
 							<ClayPaginationBarWithBasicItems
-								defaultActive={page}
 								active={page}
 								activeDelta={pageSize}
 								ellipsisBuffer={3}
@@ -297,7 +319,7 @@ function App() {
 									setPage(page);
 								}}
 								spritemap={Liferay.Icons.spritemap}
-								totalItems={totalCount}
+								totalItems={tickets.totalCount}
 							/>
 						</div>
 					</div>
@@ -312,12 +334,14 @@ function App() {
 												? 'font-weight-bold'
 												: ''
 										}
-										href=""
+										href="/"
 										onClick={(event) => {
 											if (filter === thisFilter) {
 												setFilter(initialFilterState);
+												setPage(1);
 											} else {
 												setFilter(thisFilter);
+												setPage(1);
 											}
 											event.preventDefault();
 										}}
@@ -360,6 +384,7 @@ function App() {
 																href={
 																	suggestion.assetURL
 																}
+																rel="noreferrer"
 																target="_blank"
 															>
 																{

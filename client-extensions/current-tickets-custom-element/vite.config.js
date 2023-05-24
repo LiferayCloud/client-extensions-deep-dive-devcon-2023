@@ -1,3 +1,4 @@
+import eslint from 'vite-plugin-eslint';
 import react from '@vitejs/plugin-react';
 import {defineConfig} from 'vite';
 
@@ -7,7 +8,7 @@ export default defineConfig({
 	build: {
 		outDir: 'build',
 	},
-	plugins: [react()],
+	plugins: [eslint(), react()],
 	server: {
 		origin: 'http://localhost:5173',
 	},
