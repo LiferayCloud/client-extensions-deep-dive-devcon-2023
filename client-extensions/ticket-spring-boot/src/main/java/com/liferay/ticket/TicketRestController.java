@@ -50,19 +50,21 @@ public class TicketRestController {
 			_log.info("JWT Claims: " + jwt.getClaims());
 			_log.info("JWT ID: " + jwt.getId());
 			_log.info("JWT Subject: " + jwt.getSubject());
+		}
 
-			try {
-				JSONObject jsonObject = new JSONObject(json);
+		try {
+			JSONObject jsonObject = new JSONObject(json);
 
+			if (_log.isInfoEnabled()) {
 				_log.info("JSON INPUT: \n\n" + jsonObject.toString(4) + "\n");
+			}
 
-				_documentationReferral.addDocumentationReferralAndQueue(
-					_lxcDXPServerProtocol, _lxcDXPMainDomain,
-					jwt.getTokenValue(), jsonObject);
-			}
-			catch (Exception exception) {
-				_log.error("JSON: " + json, exception);
-			}
+			_documentationReferral.addDocumentationReferralAndQueue(
+				_lxcDXPServerProtocol, _lxcDXPMainDomain,
+				jwt.getTokenValue(), jsonObject);
+		}
+		catch (Exception exception) {
+			_log.error("JSON: " + json, exception);
 		}
 
 		return new ResponseEntity<>(json, HttpStatus.CREATED);
