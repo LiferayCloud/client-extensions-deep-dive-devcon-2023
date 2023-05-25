@@ -2,10 +2,10 @@
 
 ## Before Workshop
 
-<em>Note that this setup might take as long as 15 minutes so please run 
-these steps before the workshop!</em>
+_Note that this setup might take as long as 15 minutes so please run
+these steps before the workshop!_
 
-<em>If you'd like help with these commands you can reach out on this Liferay community Slack channel: [#devcon-2023-client-extensions-101-workshop](https://liferay-community.slack.com/archives/C058EQJ0MFG)</em>
+_If you'd like help with these commands you can reach out on this Liferay community Slack channel: [#devcon-2023-client-extensions-101-workshop](https://liferay-community.slack.com/archives/C058EQJ0MFG)_
 
 1. Download [client-extensions-deep-dive-devcon-2023.tar.gz](https://drive.google.com/uc?id=1_WnztbRVFcmo94F9zs4pHWi3_uEF73GU&export=download) and unzip
 
@@ -13,105 +13,101 @@ these steps before the workshop!</em>
 
    Clone repo:
 
-   `git clone https://github.com/LiferayCloud/client-extensions-deep-dive-devcon-2023.git`
+   ```bash
+   git clone https://github.com/LiferayCloud/client-extensions-deep-dive-devcon-2023.git
+   ```
 
 1. Change into workspace
 
-   `cd client-extensions-deep-dive-devcon-2023`
+   ```bash
+   cd client-extensions-deep-dive-devcon-2023
+   ```
 
-1. Setup the bundle
+1. Initialize the bundle _(this downloads dependencies so it might take a while)_
 
-   `./gradlew initBundle`
+   ```bash
+   ./gradlew initBundle
+   ```
 
 1. Start DXP
    1. Linux/Mac:
 
-      `./bundles/tomcat-9.0.73/bin/catalina.sh run`
+      ```bash
+      ./bundles/tomcat-9.0.73/bin/catalina.sh run
+      ```
 
    1. Windows:
 
-      `.\bundles\tomcat-9.0.73\bin\catalina.bat run`
+      ```bash
+      .\bundles\tomcat-9.0.73\bin\catalina.bat run
+      ```
 
 1. Liferay should pop up automatically on http://localhost:8080
 
 1. Log in to liferay with user `test@liferay.com` and password `test`
 
-   <em>Note - if the page is unresponsive you might have to refresh the page once before logging in (known issue).</em>
+   _Note - if the page is unresponsive you might have to refresh the page once before logging in (known issue)._
 
 1. Change the password to something you can remember
 
 1. Build all projects
 
-   `./gradlew build`
-
-<!--
-### Sections
-
-- Declarative Persistence
-- Front-end
-- Business Logic
--->
+   ```bash
+   ./gradlew build
+   ```
 
 ## Workshop Exercise
 
 ### Introduction
 
-1. Salt of client extensions: a generic mechanism to enable running customizations to run outside LIferay with secure communications, built around a new configuration file: client-extension.yaml
-1. Use case
-   - Ticket management system
-   - Requirements:
-      - Custom UI
-      - Corporate style
-      - Algorithmic documentation referral
+> **What are Client Extensions again?**<br/><br/>Client extensions are a generic mechanism which enables running customizations outside Liferay.<br/><br/>They are defined in a `client-extension.yaml` file where we specify their properties.<br/><br/>When they communicate with DXP or with other Client Extensions they do so securely using OAuth2 with DXP as the Authrization Server.
 
+In this workspace we will use Client Extensions to build the following use case:
+
+- A ticket management system
+
+- Requirements:
+   - Defines a Customized Data Schema
+   - Applies the Corporate brand and style
+   - Provides a Customized User Application
+   - Implements Algorithmic Documentation Referral
+
+In the end it should look like the following image:
 ![Screenshot](./application-screenshot.png)
 
-## Declarative Persistence
+## Defining a Customized Data Schema
 
-Our business domain is Ticket management and DXP doesn't have the concept of tickets. We would have used Service Builder but now we want to use declarative persistence, the object framework.
+Our business domain is **Ticket** management and DXP doesn't have the concept of a Ticket. We would have used Service Builder but now we want to use the declarative persistence feature of DXP to define them, [Objects](https://learn.liferay.com/web/guest/w/dxp/building-applications/objects).
 
-### Picklist
+Our **Ticket** domain model will be defined starting by creating some [Picklists](https://learn.liferay.com/web/guest/w/dxp/building-applications/objects/picklists/using-picklists#creating-a-picklist). A picklist is a predetermined list of values a user can select, like a vocabulary. We can use Picklists when modelling Objects where some attributes need to be constrained to specific values. For instance; status, priority, region and so on.
 
-The ticket domain model has some attributes which are constrained to a list of possible values: status, priority, region and so on.
+The Picklists we need are already defined in the project `client-extensions/list-type-batch`.
 
-![Ticket Attributes](./ticket-attributes.png)
+This project's `client-extension.yaml` declares a client extension of `type: batch` which is used to import DXP resources without requiring us to write any code. Resources are exported from DXP's Import/Export Center in the `JSONT` format required for client extensions and placed in the project's `batch` directory. Batch engine data files are not generated by hand but are meant to be editiable by humans.
 
-- Show pick lists control panel (empty)
-   [link](http://localhost:8080/group/guest/~/control_panel/manage?p_p_id=com_liferay_object_web_internal_list_type_portlet_portlet_ListTypeDefinitionsPortlet&p_p_lifecycle=0&p_p_state=maximized)
-
-- Show the picklist project
-- Describe the batch resource
-- Batch resources are not generated by humans but ARE editable by them
-- Explain that we modelled the pick lists in a DXP instance and exported previously into the required format for a client extension
-- Execute this commmand from the root of the project to deploy the picklists:
+Execute the following commmand from the root of the workspace to deploy the picklists:
 ```bash
 ./gradlew :client-extensions:list-type-batch:deploy
 ```
-- Watch the tomcat logs to see that the client extension deployed
+Watch the tomcat logs to see that the client extension deployed.
 
-- Show populated pick lists
-      [link](http://localhost:8080/group/guest/~/control_panel/manage?p_p_id=com_liferay_object_web_internal_list_type_portlet_portlet_ListTypeDefinitionsPortlet&p_p_lifecycle=0&p_p_state=maximized)
+Now we can deploy our **Ticket** _Object_ which was already defined in the project `client-extensions/ticket-batch`.
 
-### discuss object definitions
+In similar fashion to the previous one, this project's `client-extension.yaml` declares a client extension of `type: batch` as well. It's `batch` directory contains the batch engine data file where the **Ticket** _object_ is defined.
 
-Now that we've modelled the necessary ticket domain attributes, we can model the ticket
-
-- deploy object definition with object action `"active": false`
-
+Execute the following commmand from the root of the workspace to deploy the Ticket object:
 ```bash
 ./gradlew :client-extensions:ticket-batch:deploy
 ```
+Watch the tomcat logs to see that the client extension deployed.
 
-- show the new ticket object
-   [link]()
-- Show the CRUD UI
-- create an entry
-- describe the ticket headless API
-   [link](http://localhost:8080/o/api?endpoint=http://localhost:8080/o/c/tickets/openapi.json)
+One very important feature of using Objects to define our domain model is that headless APIs are automatically provided for you without any additional effort.
 
-### discuss object entries (tickets)
+You can view these APIs in DXP's built in headless API browser by following this link: [Tickets Headless API](http://localhost:8080/o/api?endpoint=http://localhost:8080/o/c/tickets/openapi.json)
 
-We created the first ticket by hand, but in the scenario where you have preexisting data, you can import it using batch (several of these operations do need to be performed in order)
+Please view the endpoints of the headless API now.
+
+We created the first ticket by hand, but in the scenario where you have pre-existing data, you can import it using batch (several of these operations do need to be performed in order)
 
 - deploy some pre-existing tickets
 
@@ -198,4 +194,3 @@ curl -v -X POST http://localhost:58081/ticket/object/action/documentation/referr
 - create a new ticket
 - demonstrate the ticket changes (links and queued)
 
-## FAQ
