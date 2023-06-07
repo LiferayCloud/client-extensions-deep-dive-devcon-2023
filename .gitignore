@@ -16,7 +16,6 @@
 .DS_Store
 .gradle
 .idea
-.userHomeCache/
 /bundles
 /gradle-*.properties
 /plugins-sdk/**/classes
