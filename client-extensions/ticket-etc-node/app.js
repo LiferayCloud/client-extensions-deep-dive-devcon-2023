@@ -1,19 +1,32 @@
-'use strict';
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
 
 import bodyParser from 'body-parser';
-import config from './util/configTreePath.js';
 import express from 'express';
-import {
-	corsWithReady,
-	liferayJWT,
-} from './util/liferay-oauth2-resource-server.js';
-import log from './util/log.js';
+import fetch from 'node-fetch';
 
-log.info(`config: ${JSON.stringify(config, null, '\t')}`);
+import config from './util/configTreePath.js';
+import {corsWithReady, liferayJWT} from './util/liferay-oauth2-resource-server.js';
+import {logger} from './util/logger.js';
 
+const serverPort = config['server.port'];
 const app = express();
 
-app.use(bodyParser.json());
+logger.log(`config: ${JSON.stringify(config, null, '\t')}`);
+
+app.use(express.json());
 app.use(corsWithReady);
 app.use(liferayJWT);
 
@@ -21,28 +34,17 @@ app.get(config.readyPath, (req, res) => {
 	res.send('READY');
 });
 
-app.post('/ticket/object/action/1', async (req, res) => {
-	log.info('User %s is authorized', req.jwt.username);
-	log.info('User scopes: ' + req.jwt.scope);
+app.post('/ticket/object/action/documentation/referral', async (req, res) => {
+	logger.log('User %s is authorized', req.jwt.username);
+	logger.log('User scopes: ' + req.jwt.scope);
 
 	const json = req.body;
-	log.info(`/ticket/object/action/1: json: ${JSON.stringify(json, null, '\t')}`);
+	logger.log(`/ticket/object/action/documentation/referral: json: ${JSON.stringify(json, null, '\t')}`);
 	res.status(200).send(json);
 });
-
-app.post('/ticket/object/action/2', async (req, res) => {
-	log.info('User %s is authorized', req.jwt.username);
-	log.info('User scopes: ' + req.jwt.scope);
-
-	const json = req.body;
-	log.info(`/ticket/object/action/2: json: ${JSON.stringify(json, null, '\t')}`);
-	res.status(200).send(json);
-});
-
-const serverPort = config['server.port'];
 
 app.listen(serverPort, () => {
-	log.info('App listening on %s', serverPort);
+	logger.log('App listening on %s', serverPort);
 });
 
 export default app;

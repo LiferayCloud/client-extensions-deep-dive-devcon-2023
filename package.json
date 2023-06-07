@@ -3,7 +3,8 @@
     "workspaces": {
         "packages": [
             "client-extensions/current-tickets-custom-element",
-            "client-extensions/tickets-theme-css"
+            "client-extensions/tickets-theme-css",
+            "client-extensions/ticket-etc-node"
         ]
     }
 }
