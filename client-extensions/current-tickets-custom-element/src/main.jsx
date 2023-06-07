@@ -1,13 +1,17 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
-import App from './App.jsx';
+import TicketApp from './TicketApp.jsx';
+import {QueryClient, QueryClientProvider} from 'react-query';
 
+const queryClient = new QueryClient();
 class WebComponent extends HTMLElement {
 	connectedCallback() {
 		const root = createRoot(this);
 		root.render(
 			<React.StrictMode>
-				<App route={this.getAttribute('route') || '/'} />
+				<QueryClientProvider client={queryClient}>
+					<TicketApp queryClient={queryClient} route={this.getAttribute('route') || '/'} />
+				</QueryClientProvider>
 			</React.StrictMode>
 		);
 	}
