@@ -1,7 +1,7 @@
 buildscript {
 	dependencies {
 		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd", version: "5.2.0"
-		classpath(group: "com.liferay", name: "com.liferay.gradle.plugins.workspace", version: "6.1.2") {
+		classpath(group: "com.liferay", name: "com.liferay.gradle.plugins.workspace", version: "6.1.5") {
 			exclude group: "biz.aQute.bnd", module: "biz.aQute.bnd"
 		}
 	}
@@ -18,5 +18,3 @@ buildscript {
 }
 
 apply plugin: "com.liferay.workspace"
-
-System.setProperty('user.home', new File(rootProject.projectDir, '.userHomeCache').absolutePath)
