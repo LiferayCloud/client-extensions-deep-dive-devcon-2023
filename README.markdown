@@ -73,7 +73,7 @@ In this workspace we will use Client Extensions to build the following use case:
   - Implements Programmatic Documentation Referral
 
 In the end it should look like the following image:
-![Screenshot](./application-screenshot.png)
+![Screenshot](./img/application-screenshot.png)
 
 ## Defining a Customized Data Schema
 
@@ -143,7 +143,7 @@ Execute the following commmand from the root of the workspace to deploy the tick
 > Watch the tomcat logs to see that the client extension deployed.
 
 At this point let's return to the [main page of our site](http://localhost:8080). Let's apply the tickets-theme-css to the home page as demonstrated in the following video:
-  ![Apply Theme to All Pages](./apply-theme.gif)
+  ![Apply Theme to All Pages](./img/apply-theme.gif)
 
 We've acheived our second business requirement: **Apply the Corporate brand and style**. Let's move onto the next.
 
@@ -176,7 +176,7 @@ Execute the following commmand from the root of the workspace to deploy the curr
 > Watch the tomcat logs to see that the client extension deployed.
 
 At this point let's return to the [main page of our site](http://localhost:8080). Let's remove the main grid section and add the current-tickets-custom-element in place of it as demonstrated in the following video
-  ![Edit Home Page to Add Custom Element](./edit-home-page.gif)
+  ![Edit Home Page to Add Custom Element](./img/edit-home-page.gif)
 
 Note that this app uses the auto-generated **Ticket** headless APIs.
 
@@ -203,8 +203,9 @@ Back to the business logic.
 > Please take a moment to look at the file `client-extensions/ticket-spring-boot/src/main/java/com/liferay/ticket/TicketRestController.java`
 
 The key takeaways should be that:
+
 - the body of the request is the payload which contains all the information relevant to the object entry for which the event was triggered
-- the endpoint receives and validates JWT tokens which are signed by the portal and issued specifically for the clientId provisioned for the OAuth2Application also specified in the `client-extension.yaml` using the client extension of `type: oAuthApplicationUserAgent`
+- the endpoint receives and validates JWT tokens which are signed by DXP and issued specifically for the clientId provisioned for the OAuth2Application also specified in the `client-extension.yaml` using the client extension of `type: oAuthApplicationUserAgent`
 
 **In a separate terminal**, execute the following commmand from the root of the workspace to deploy the ticket-spring-boot project and at the same time start the microservice:
 
@@ -214,19 +215,156 @@ The key takeaways should be that:
 
 > Watch the tomcat logs to see that the client extension deployed.
 
-To whitness that the microservice will not allow unauthorized requests run the following curl command in a separate terminal while the microservice is running:
+To witness that the microservice will not allow unauthorized requests run the following curl command in a separate terminal while the microservice is running:
 
 ```bash
 curl -v -X POST http://localhost:58081/ticket/object/action/documentation/referral
 ```
 
-Note the response returns an error.
+> Note the response returns an error.
 
 Finally, return to the [main page of our site](http://localhost:8080) and click the `Generate a New Ticket` button. Review the outcome and verify that:
 
 1. a ticket was created
 1. the documentation referrals are added
 
-We've acheived our third business requirement: **Implement Algorithmic Documentation Referral**.
+We've acheived our third business requirement: **Implement Programmatic Documentation Referral**.
 
 Try making other changes to the projects and redeploying the changes. In the case of the microservice make sure not only to execute the deploy task but also to restart it after any changes.
+
+## Ticket cleanup with cron job (Extra credit)
+
+Now that we can create tickets, at some point, we need to clean them up. Let's create a cron job that will delete all tickets that are marked 'done' or 'duplicate'.  To do this we will use a spring boot application that when executed, it will connect to DXP using the generated headless/REST API for ticket objects using another type of client extension `type: oAuthApplicationHeadlessServer`.  This type of OAuth2 application is using the client credentials flow and is associated with a special account defined for this purpose (the current default uses the instance admin).  One thing that we need to know is that client credential flow in OAuth2 require both a client_id and client_secret, so there will be some additional steps to perform in order to get this working locally.
+
+The `client-extensions/ticket-cleanup-cron` project's `client-extension.yaml` declares a client extension of `type: oAuth2ApplicationHeadlessServer` (see [OAuth2ApplicationHeadlessServer Client Extension](https://learn.liferay.com/w/dxp/building-applications/client-extensions/configuration-client-extensions/oauth-headless-server-yaml-configuration-reference)) which defines an OAuth2 Application using client credntials flow.
+
+Execute the following command
+
+```bash
+./gradlew :client-extensions:ticket-cleanup-cron:deploy
+```
+
+> Note: See tomcat log for when the client extension is deployed.  Now the oAuthApplication has been created in DXP.
+
+If this were an LXC deployment, the cron schedule is specified in the LCP.json and would be scheduled accordingly.  Since we are using a local deployment, we will simulate the cron execution by executing the application ourself.  However, since this is a client_credentials type of OAuth2 Application we must provide both the client_id and client_secret.  In our sample the code already gets the client_id by looking it up via the external reference code.  However, we must copy the secret from the DXP UI.
+
+1. Go to the DXP UI and navigate to Control Panel > Security > OAuth 2 Administration
+1. Select the `Ticket Cleanup Oauth Application Headless Server` application and click on the `Edit` button for the Client Secret field.  Copy the value.
+1. In the terminal run the following command:
+
+```bash
+./gradlew :client-extensions:ticket-cleanup-cron:bootRun --args='--ticket-cleanup-oauth-application-headless-server.oauth2.headless.server.client.secret=<PASTE_IN_CLIENT_SECRET>'
+```
+
+> Note: when you run the application you should see a message about the number of tickets that were deleted.
+
+```bash
+2023-06-14 18:18:23.027  INFO 29047 --- [           main] c.l.t.TicketCleanupCommandLineRunner     : Amount of tickets: 11
+2023-06-14 18:18:23.028  INFO 29047 --- [           main] c.l.t.TicketCleanupCommandLineRunner     : Deleting ticket: 44767
+2023-06-14 18:18:23.134  INFO 29047 --- [           main] c.l.t.TicketCleanupCommandLineRunner     : Deleting ticket: 44795
+```
+
+## LXC Deployment (Extra Credit)
+
+In order to deploy to LXC, we need the following as requirements:
+
+1. LXC extension environment with LCP credentials
+1. Access to DXP Virtual Instance connected to the LXC extension enviroment
+
+Assuming you have everything above, we can now deploy our extensions to LXC.  The following steps will deploy the client extensions to LXC:
+
+1. From root workspace run this command: `./gradlew :client-extensions:build`
+1. Execute `lcp login` and enter your credentials
+1. Execute `lcp deploy --extension <path_to_cx_zip>` and select the LXC environment for each client extension zip
+
+
+First lets deplay the list-type-batch extension which is the first one we need to deploy since ticket-batch depends on it.
+
+```bash
+lcp deploy --extension client-extensions/list-type-batch/dist/list-type-batch.zip
+```
+
+In the LCP console logs for this extension wait until you see
+
+```bash
+Jun 16 16:53:26.429 build-58 [listtypebatch-vhp9k] Execute Status: STARTED
+Jun 16 16:53:27.228 build-58 [listtypebatch-vhp9k] Execute Status: COMPLETED
+```
+
+Next lets deploy the ticket-batch extension
+
+```bash
+lcp deploy --extension client-extensions/ticket-batch/dist/ticket-batch.zip
+```
+
+In the LCP console logs for this extension wait until you see
+
+```bash
+Jun 16 16:59:24.734 build-59 [ticketbatch-cnhtt] Execute Status: STARTED
+Jun 16 16:59:25.532 build-59 [ticketbatch-cnhtt] Execute Status: COMPLETED
+```
+
+Now that we have deployed both of the batch type extensions, lets verify in the DXP UI that our object has been imported.
+
+1. Go to the DXP UI and navigate to Control Panel > Object > Objects
+1. Verify that the Ticket object is listed
+
+Next we can deploy both of the frontend client extensions at the same time.
+
+```bash
+lcp deploy --extension client-extensions/current-tickets-custom-element/dist/current-tickets-custom-element.zip
+lcp deploy --extension client-extensions/tickets-theme-css/dist/tickets-theme-css.zip
+```
+
+Since these are frontend client extensions, the resources will be loaded by the browser, so we need to make sure the client extension workloads (a Caddy fileserver) are visible on the network (which means the dns entries and global loadblancer will resolve the requests).  You can view this using the network tag of the LCP Console:
+
+https://console.liferay.cloud/projects/<your_ext_project>/network/endpoints
+
+Wait until you see both the ingress endpoints are green.
+
+![Network](./img/lcp-console-network.png)
+
+Now we can deploy the microservice client extension.
+
+```bash
+lcp deploy --extension client-extensions/tickets-spring-boot/dist/tickets-spring-boot.zip
+```
+
+If it isn't working, see the troubleshooting section down below.  If it is working you should see the servie available and in the logs you should see a message like this:
+
+```
+Jun 16 17:46:26.730 build-65 [ticketspringboot-74fcf56d76-tll5v] 2023-06-16 22:46:26.729  INFO 8 --- [           main] rayOAuth2ResourceServerEnableWebSecurity : Using client ID id-99677fc4-b15d-5968-4a1b-88e63897f9
+```
+
+This means your microservice is correctly talking with DXP and will be able to verify JWT tokens.
+
+## LXC Troubleshooting
+
+Here are some possible problems you may run into when deploying to LXC and how to try to troubleshoot them.
+
+### Spring Boot micrservice not starting (not enough memory)
+
+If you the LCP console logs for the spring-boot microservice show that the spring-boot process is being killed like this:
+
+```bash
+Jun 16 17:22:22.897 build-62 [ticketspringboot-7c9d7f4999-pqcv2] [INFO  tini (1)] Spawned child process '/usr/local/bin/liferay_jar_runner_entrypoint.sh' with pid '7'
+Jun 16 17:22:22.897 build-62 [ticketspringboot-7c9d7f4999-pqcv2] [INFO  tini (1)] Main child exited with signal (with signal 'Terminated')
+```
+
+It could be because the pod does not have enough memory.  Edit the `client-extensions/ticket-spring-boot/LCP.json` and set the memory to a higher amount and redploy.
+
+```bash
+./gradlew :client-extensions:ticket-spring-boot:build
+lcp deploy --extension client-extensions/tickets-spring-boot/dist/tickets-spring-boot.zip
+```
+
+### Spring boot microservice not starting (/ready endpoint not available)
+
+If the spring boot microservice is not starting, and the reason is because the container is being killed you will see a message like this:
+
+```bash
+Jun 16 17:22:22.897 build-62 [ticketspringboot-7c9d7f4999-pqcv2] [INFO  tini (1)] Spawned child process '/usr/local/bin/liferay_jar_runner_entrypoint.sh' with pid '7'
+Jun 16 17:22:22.897 build-62 [ticketspringboot-7c9d7f4999-pqcv2] [INFO  tini (1)] Main child exited with signal (with signal 'Terminated')
+```
+
+This may be because LCP could not detect that the service was ready.  Review the LCP.json and notice the `/ready` path.  Ensure that this path is able to respond to the platform within the specified timeout.
