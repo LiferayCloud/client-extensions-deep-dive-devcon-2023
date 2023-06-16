@@ -73,7 +73,7 @@ In this workspace we will use Client Extensions to build the following use case:
   - Implements Programmatic Documentation Referral
 
 In the end it should look like the following image:
-![Screenshot](./application-screenshot.png)
+![Screenshot](./img/application-screenshot.png)
 
 ## Defining a Customized Data Schema
 
@@ -143,7 +143,7 @@ Execute the following commmand from the root of the workspace to deploy the tick
 > Watch the tomcat logs to see that the client extension deployed.
 
 At this point let's return to the [main page of our site](http://localhost:8080). Let's apply the tickets-theme-css to the home page as demonstrated in the following video:
-  ![Apply Theme to All Pages](./apply-theme.gif)
+  ![Apply Theme to All Pages](./img/apply-theme.gif)
 
 We've acheived our second business requirement: **Apply the Corporate brand and style**. Let's move onto the next.
 
@@ -176,7 +176,7 @@ Execute the following commmand from the root of the workspace to deploy the curr
 > Watch the tomcat logs to see that the client extension deployed.
 
 At this point let's return to the [main page of our site](http://localhost:8080). Let's remove the main grid section and add the current-tickets-custom-element in place of it as demonstrated in the following video
-  ![Edit Home Page to Add Custom Element](./edit-home-page.gif)
+  ![Edit Home Page to Add Custom Element](./img/edit-home-page.gif)
 
 Note that this app uses the auto-generated **Ticket** headless APIs.
 
@@ -234,7 +234,7 @@ Try making other changes to the projects and redeploying the changes. In the cas
 
 ## Ticket cleanup with cron job (Extra credit)
 
-Now that we can create tickets, at some point, we need to clean them up. Let's create a cron job that will delete all tickets that are marked 'done' or 'duplicate'.  To do this we will use a spring boot application that when executed, it will connect to DXP using the generated headless/REST API for ticket objects using another type of client extension `type: oAuthApplicationHeadlessServer`.  This type of OAuth2 application is using the client credentials flow and is not associated with a user but a service account.  One thing that we need to know is that client credential flow in OAuth2 require both a client_id and client_secret, so there will be some additional steps to perform in order to get this working locally.
+Now that we can create tickets, at some point, we need to clean them up. Let's create a cron job that will delete all tickets that are marked 'done' or 'duplicate'.  To do this we will use a spring boot application that when executed, it will connect to DXP using the generated headless/REST API for ticket objects using another type of client extension `type: oAuthApplicationHeadlessServer`.  This type of OAuth2 application is using the client credentials flow and is associated with a special account defined for this purpose (the current default uses the instance admin).  One thing that we need to know is that client credential flow in OAuth2 require both a client_id and client_secret, so there will be some additional steps to perform in order to get this working locally.
 
 The `client-extensions/ticket-cleanup-cron` project's `client-extension.yaml` declares a client extension of `type: oAuth2ApplicationHeadlessServer` (see [OAuth2ApplicationHeadlessServer Client Extension](https://learn.liferay.com/w/dxp/building-applications/client-extensions/configuration-client-extensions/oauth-headless-server-yaml-configuration-reference)) which defines an OAuth2 Application using client credntials flow.
 
@@ -277,6 +277,9 @@ Assuming you have everything above, we can now deploy our extensions to LXC.  Th
 1. Execute `lcp login` and enter your credentials
 1. Execute `lcp deploy --extension <path_to_cx_zip>` and select the LXC environment for each client extension zip
 
+
+First lets deplay the list-type-batch extension which is the first one we need to deploy since ticket-batch depends on it.
+
 ```bash
 lcp deploy --extension client-extensions/list-type-batch/dist/list-type-batch.zip
 ```
@@ -284,10 +287,11 @@ lcp deploy --extension client-extensions/list-type-batch/dist/list-type-batch.zi
 In the LCP console logs for this extension wait until you see
 
 ```bash
-Jun 14 15:11:35.212 build-53 [listtypebatch-8jlxl] Execute Status: STARTED
-Jun 14 15:11:37.112 build-53 [listtypebatch-8jlxl] Execute Status: STARTED
-Jun 14 15:11:38.300 build-53 [listtypebatch-8jlxl] Execute Status: COMPLETED
+Jun 16 16:53:26.429 build-58 [listtypebatch-vhp9k] Execute Status: STARTED
+Jun 16 16:53:27.228 build-58 [listtypebatch-vhp9k] Execute Status: COMPLETED
 ```
+
+Next lets deploy the ticket-batch extension
 
 ```bash
 lcp deploy --extension client-extensions/ticket-batch/dist/ticket-batch.zip
@@ -296,13 +300,71 @@ lcp deploy --extension client-extensions/ticket-batch/dist/ticket-batch.zip
 In the LCP console logs for this extension wait until you see
 
 ```bash
-Jun 14 15:11:35.212 build-53 [ticketbatch] Execute Status: STARTED
-Jun 14 15:11:37.112 build-53 [ticketbatch] Execute Status: STARTED
-Jun 14 15:11:38.300 build-53 [ticketbatch] Execute Status: COMPLETED
+Jun 16 16:59:24.734 build-59 [ticketbatch-cnhtt] Execute Status: STARTED
+Jun 16 16:59:25.532 build-59 [ticketbatch-cnhtt] Execute Status: COMPLETED
 ```
+
+Now that we have deployed both of the batch type extensions, lets verify in the DXP UI that our object has been imported.
+
+1. Go to the DXP UI and navigate to Control Panel > Object > Objects
+1. Verify that the Ticket object is listed
+
+Next we can deploy both of the frontend client extensions at the same time.
 
 ```bash
 lcp deploy --extension client-extensions/current-tickets-custom-element/dist/current-tickets-custom-element.zip
 lcp deploy --extension client-extensions/tickets-theme-css/dist/tickets-theme-css.zip
+```
+
+Since these are frontend client extensions, the resources will be loaded by the browser, so we need to make sure the client extension workloads (a Caddy fileserver) are visible on the network (which means the dns entries and global loadblancer will resolve the requests).  You can view this using the network tag of the LCP Console:
+
+https://console.liferay.cloud/projects/<your_ext_project>/network/endpoints
+
+Wait until you see both the ingress endpoints are green.
+
+![Network](./img/lcp-console-network.png)
+
+Now we can deploy the microservice client extension.
+
+```bash
 lcp deploy --extension client-extensions/tickets-spring-boot/dist/tickets-spring-boot.zip
 ```
+
+If it isn't working, see the troubleshooting section down below.  If it is working you should see the servie available and in the logs you should see a message like this:
+
+```
+Jun 16 17:46:26.730 build-65 [ticketspringboot-74fcf56d76-tll5v] 2023-06-16 22:46:26.729  INFO 8 --- [           main] rayOAuth2ResourceServerEnableWebSecurity : Using client ID id-99677fc4-b15d-5968-4a1b-88e63897f9
+```
+
+This means your microservice is correctly talking with DXP and will be able to verify JWT tokens.
+
+## LXC Troubleshooting
+
+Here are some possible problems you may run into when deploying to LXC and how to try to troubleshoot them.
+
+### Spring Boot micrservice not starting (not enough memory)
+
+If you the LCP console logs for the spring-boot microservice show that the spring-boot process is being killed like this:
+
+```bash
+Jun 16 17:22:22.897 build-62 [ticketspringboot-7c9d7f4999-pqcv2] [INFO  tini (1)] Spawned child process '/usr/local/bin/liferay_jar_runner_entrypoint.sh' with pid '7'
+Jun 16 17:22:22.897 build-62 [ticketspringboot-7c9d7f4999-pqcv2] [INFO  tini (1)] Main child exited with signal (with signal 'Terminated')
+```
+
+It could be because the pod does not have enough memory.  Edit the `client-extensions/ticket-spring-boot/LCP.json` and set the memory to a higher amount and redploy.
+
+```bash
+./gradlew :client-extensions:ticket-spring-boot:build
+lcp deploy --extension client-extensions/tickets-spring-boot/dist/tickets-spring-boot.zip
+```
+
+### Spring boot microservice not starting (/ready endpoint not available)
+
+If the spring boot microservice is not starting, and the reason is because the container is being killed you will see a message like this:
+
+```bash
+Jun 16 17:22:22.897 build-62 [ticketspringboot-7c9d7f4999-pqcv2] [INFO  tini (1)] Spawned child process '/usr/local/bin/liferay_jar_runner_entrypoint.sh' with pid '7'
+Jun 16 17:22:22.897 build-62 [ticketspringboot-7c9d7f4999-pqcv2] [INFO  tini (1)] Main child exited with signal (with signal 'Terminated')
+```
+
+This may be because LCP could not detect that the service was ready.  Review the LCP.json and notice the `/ready` path.  Ensure that this path is able to respond to the platform within the specified timeout.
