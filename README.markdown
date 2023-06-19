@@ -60,7 +60,7 @@ _If you'd like help with these commands you can reach out on this Liferay commun
 
 ### Introduction
 
-> **What are Client Extensions again?**<br/><br/>Client extensions are a generic mechanism for customizating or extending DXP which run outside of DXP.<br/><br/>The extensions are defined in a `client-extension.yaml` file where we specify their properties.<br/><br/>This config file is deployed to DXP in order to config it to communicate with our Client Extension.  In order to allow secure communcation between DXP and your client extension, OAuth2 can be used easily by specifing oAuth2Application* type of client extension.  To learn more about Client Extensions visit the [reference documentation](https://learn.liferay.com/w/dxp/building-applications/client-extensions).
+> **What are Client Extensions again?**<br/><br/>Client extensions are a generic mechanism for customizating or extending DXP which run outside of DXP.<br/><br/>The extensions are defined in a `client-extension.yaml` file where we specify their properties.<br/><br/>This config file is deployed to DXP in order to give it the configuration information necessary to communicate with our Client Extension.  For secure communcation between DXP and your client extension, OAuth2 can be used easily by specifing oAuth2Application* type of client extension.  To learn more about Client Extensions visit the [reference documentation](https://learn.liferay.com/w/dxp/building-applications/client-extensions).
 
 In this workspace we will use Client Extensions to build the following use case:
 
@@ -115,16 +115,15 @@ You can view these APIs in DXP's built in headless API browser by following this
 
 > Action item: Please view the endpoints of the headless API now.
 
-<!-- We created the first ticket by hand, but in the scenario where you have pre-existing data, you can import it using batch (several of these operations do need to be performed in order)
+We created the first ticket by hand, but in the scenario where you have pre-existing data, you can import it using batch (several of these operations do need to be performed in order)
 
-- deploy some pre-existing tickets
+- Lets deploy some pre-existing tickets
 
 ```bash
 ./gradlew :client-extensions:ticket-entry-batch:deploy
 ```
 
-- show the ticket entries
--->
+- Now you can see these ticket entires in the DXP UI
 
 We've acheived our first business requirement: **Define a Customized Data Schema**. Let's move onto the next.
 
@@ -342,9 +341,15 @@ This means your microservice is correctly talking with DXP and will be able to v
 
 Here are some possible problems you may run into when deploying to LXC and how to try to troubleshoot them.
 
-### Spring Boot micrservice not starting (not enough memory)
+### Spring boot microservice not starting (no logs show)
 
-If you the LCP console logs for the spring-boot microservice show that the spring-boot process is being killed like this:
+If you do not see your microservice client extension is starting (lcp deployment never finishes), it is likely because DXP did not process your client-extension configuration correctly or had some error.  You can check the DXP logs to see if there is an error.
+
+Here you could use the internal diagnostics tool to try to determine why the microservice is not starting once it is generally available.
+
+### Spring Boot micrservice starts but is killed (not enough memory)
+
+If you the LCP console logs for the spring-boot microservice you see that is starts, but it shows that the spring-boot process is being killed like this:
 
 ```bash
 Jun 16 17:22:22.897 build-62 [ticketspringboot-7c9d7f4999-pqcv2] [INFO  tini (1)] Spawned child process '/usr/local/bin/liferay_jar_runner_entrypoint.sh' with pid '7'
@@ -358,9 +363,9 @@ It could be because the pod does not have enough memory.  Edit the `client-exten
 lcp deploy --extension client-extensions/tickets-spring-boot/dist/tickets-spring-boot.zip
 ```
 
-### Spring boot microservice not starting (/ready endpoint not available)
+### Spring boot microservice starts but is killed (/ready endpoint not available)
 
-If the spring boot microservice is not starting, and the reason is because the container is being killed you will see a message like this:
+If the spring boot microservice is starting but is immediately killed, you may see a message like this:
 
 ```bash
 Jun 16 17:22:22.897 build-62 [ticketspringboot-7c9d7f4999-pqcv2] [INFO  tini (1)] Spawned child process '/usr/local/bin/liferay_jar_runner_entrypoint.sh' with pid '7'
