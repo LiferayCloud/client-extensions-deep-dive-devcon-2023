@@ -272,7 +272,7 @@ In order to deploy to LXC, we need the following as requirements:
 
 Assuming you have everything above, we can now deploy our extensions to LXC.  The following steps will deploy the client extensions to LXC:
 
-1. From root workspace run this command: `./gradlew :client-extensions:build`
+1. From root workspace run this command: `./gradlew clean build`
 1. Execute `lcp login` and enter your credentials
 1. Execute `lcp deploy --extension <path_to_cx_zip>` and select the LXC environment for each client extension zip
 
@@ -331,11 +331,25 @@ lcp deploy --extension client-extensions/tickets-spring-boot/dist/tickets-spring
 
 If it isn't working, see the troubleshooting section down below.  If it is working you should see the servie available and in the logs you should see a message like this:
 
-```
+```bash
 Jun 16 17:46:26.730 build-65 [ticketspringboot-74fcf56d76-tll5v] 2023-06-16 22:46:26.729  INFO 8 --- [           main] rayOAuth2ResourceServerEnableWebSecurity : Using client ID id-99677fc4-b15d-5968-4a1b-88e63897f9
 ```
 
 This means your microservice is correctly talking with DXP and will be able to verify JWT tokens.
+
+### Self-Hosted (local tomcat) Troubleshooting
+
+#### Batch deployment throws error
+
+If you deploy the batch client extension to the local tomcat/osgi/client-extensions or dockerDeploy before you start the server, you may see an error when it tries to process the batch client extension.  This is a known issue where the batch client extension is processed too soon by the headless batch import process.  To fix this, simply reploy the batch client extension using `gradlew deploy` again.
+
+#### Batch Order is not correct
+
+If you try to deploy `ticket-batch` or `ticket-entry-batch` client extensions before you deploy the `list-type-batch` this will result in an error because `ticket-batch` depends on `list-type-batch` resources that must be deployed first.  This is a known issue that will be addressed in the future.
+
+#### OAuth2 Scopes are not applied
+
+If you receive a HTTP 401 error or 403 not allowed, this may be because the OAuth2 scopes were not properly applied.  To fix this you must edit the OAuthApplication in the DXP control panel UI and go to the "Scopes" tab and make sure the scopes that you are expected to be set, have indeed be set.  In this example application is ths `Ticket User Agent application` and the Scopes that should be set are the `C_Ticket.everything`
 
 ## LXC Troubleshooting
 
@@ -343,11 +357,27 @@ Here are some possible problems you may run into when deploying to LXC and how t
 
 ### Spring boot microservice not starting (no logs show)
 
-If you do not see your microservice client extension is starting (lcp deployment never finishes), it is likely because DXP did not process your client-extension configuration correctly or had some error.  You can check the DXP logs to see if there is an error.
+#### Possible error in DXP
+
+If you do not see your microservice client extension is starting (lcp deployment never finishes), it is likely because DXP did not process your client-extension configuration correctly or had some error.  You can check the DXP logs to see if there is an error processing your client extension configuration.
+
+#### Possible error in DXP server configuration
+
+It is possible that the DXP environment in the cloud is not configured correctly, namely the DXP virtual instance may work in the UI but the headless apis are not working, perhaps because of some middleware.  Ensure that the `/o/oauth2` headless apis are working by executing the following command:
+
+```bash
+curl https://dxp-env.lfr.cloud/o/oauth2/jwks
+```
+
+This should return the JSON Web Key Set (JWKS) for the DXP environment.  If it does not, then the headless apis are not working and you will need to troubleshoot the DXP environment.
+
+```bash
+{"keys":[{"kty":"RSA","kid":"authServer","alg":"RS256","n":...}]}
+```
 
 Here you could use the internal diagnostics tool to try to determine why the microservice is not starting once it is generally available.
 
-### Spring Boot micrservice starts but is killed (not enough memory)
+### Spring Boot microservice starts but is killed (not enough memory)
 
 If you the LCP console logs for the spring-boot microservice you see that is starts, but it shows that the spring-boot process is being killed like this:
 
