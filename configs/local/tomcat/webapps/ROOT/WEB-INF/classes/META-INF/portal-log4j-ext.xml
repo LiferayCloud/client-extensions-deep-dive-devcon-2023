@@ -1,12 +1,8 @@
 <?xml version="1.0"?>
-<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
-<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
-  <category name="com.liferay.oauth2.provider.internal.configuration.OAuth2ProviderApplicationHeadlessServerConfigurationFactory">
-		<priority value="WARN" />
-  </category>
-
-  <category name="com.liferay.oauth2.provider.internal.configuration.OAuth2ProviderApplicationUserAgentConfigurationFactory">
-		<priority value="WARN" />
-  </category>
-</log4j:configuration>
+<Configuration strict="true">
+    <Loggers>
+        <Logger level="WARN" name="com.liferay.oauth2.provider.internal.configuration.OAuth2ProviderApplicationHeadlessServerConfigurationFactory" />
+        <Logger level="WARN" name="com.liferay.oauth2.provider.internal.configuration.OAuth2ProviderApplicationUserAgentConfigurationFactory" />
+    </Loggers>
+</Configuration>
