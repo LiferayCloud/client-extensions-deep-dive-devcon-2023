@@ -1,4 +1,4 @@
-# Live editing tickets-theme-css
+# Live editing ticket-theme-css
 
 By deploying the dev version of this client extension, the build is changed as follows:
 
@@ -21,6 +21,6 @@ By deploying the dev version of this client extension, the build is changed as f
 
     `../../gradlew clean deployDev packageRunServe`
 
-2. Enable the Browsersync javascript extension. It is named "Tickets Theme Live JS" and needs to be added to whatever context you are using to test (e.g. you can add it to all pages or just the page you are testing)
+2. Enable the Browsersync javascript extension. It is named "Ticket Theme Live JS" and needs to be added to whatever context you are using to test (e.g. you can add it to all pages or just the page you are testing)
 
 3. Update scss files - the css changes should show automatically

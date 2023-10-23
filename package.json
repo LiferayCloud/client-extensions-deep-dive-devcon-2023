@@ -2,8 +2,8 @@
     "private": true,
     "workspaces": {
         "packages": [
+            "client-extensions/ticket-theme-css",
             "client-extensions/current-tickets-custom-element",
-            "client-extensions/tickets-theme-css",
             "client-extensions/ticket-etc-node"
         ]
     }

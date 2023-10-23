@@ -4,7 +4,9 @@
 		"ticketbatch"
 	],
 	"env": {
-		"LIFERAY_BATCH_OAUTH_APP_ERC": "ticket-entry-batch-importer"
+		"LIFERAY_BATCH_OAUTH_APP_ERC": "ticket-entry-batch-importer",
+		"LIFERAY_ROUTES_CLIENT_EXTENSION": "/etc/liferay/lxc/ext-init-metadata",
+		"LIFERAY_ROUTES_DXP": "/etc/liferay/lxc/dxp-metadata"
 	},
 	"environments": {
 		"infra": {

@@ -1,8 +1,8 @@
 assemble:
     - from: build/buildTheme/img
       into: static/img
-tickets-theme-css:
+ticket-theme-css:
     clayURL: css/clay.css
     mainURL: css/main.css
-    name: Tickets Theme CSS
+    name: Ticket Theme CSS
     type: themeCSS

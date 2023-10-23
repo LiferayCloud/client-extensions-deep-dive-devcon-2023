@@ -167,7 +167,6 @@ public class TicketCleanupCommandLineRunner implements CommandLineRunner {
 
 		public String id;
 		public Resolution resolution;
-		public String subject;
 
 	}
 
