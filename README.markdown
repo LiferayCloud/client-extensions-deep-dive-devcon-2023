@@ -131,12 +131,12 @@ We've acheived our first business requirement: **Define a Customized Data Schema
 
 Most organizations, after some level of maturity, have established a brand and style which, ideally, is carried through each new project. There are a number of existing client extensions available to support this use case as opposed to traditional Theme module. These are a subset of the client extensions referred to collectively as [Front-End Client Extensions](https://learn.liferay.com/w/dxp/building-applications/client-extensions/front-end-client-extensions).
 
-The `client-extensions/tickets-theme-css` project's `client-extension.yaml` declares a client extension of `type: themeCSS` (see [Theme CSS Client Extension](https://learn.liferay.com/w/dxp/building-applications/client-extensions/front-end-client-extensions/theme-css-yaml-configuration-reference)) which is used to replace the two core CSS resources from the portal's OOTB themes without modifying DXP.
+The `client-extensions/ticket-theme-css` project's `client-extension.yaml` declares a client extension of `type: themeCSS` (see [Theme CSS Client Extension](https://learn.liferay.com/w/dxp/building-applications/client-extensions/front-end-client-extensions/theme-css-yaml-configuration-reference)) which is used to replace the two core CSS resources from the portal's OOTB themes without modifying DXP.
 
 Execute the following commmand from the root of the workspace to deploy the tickets-theme-css project:
 
 ```bash
-./gradlew :client-extensions:tickets-theme-css:deploy
+./gradlew :client-extensions:ticket-theme-css:deploy
 ```
 
 > Watch the tomcat logs to see that the client extension deployed.
@@ -312,7 +312,7 @@ Next we can deploy both of the frontend client extensions at the same time.
 
 ```bash
 lcp deploy --extension client-extensions/current-tickets-custom-element/dist/current-tickets-custom-element.zip
-lcp deploy --extension client-extensions/tickets-theme-css/dist/tickets-theme-css.zip
+lcp deploy --extension client-extensions/ticket-theme-css/dist/ticket-theme-css.zip
 ```
 
 Since these are frontend client extensions, the resources will be loaded by the browser, so we need to make sure the client extension workloads (a Caddy fileserver) are visible on the network (which means the dns entries and global loadblancer will resolve the requests).  You can view this using the network tag of the LCP Console:
@@ -326,7 +326,7 @@ Wait until you see both the ingress endpoints are green.
 Now we can deploy the microservice client extension.
 
 ```bash
-lcp deploy --extension client-extensions/tickets-spring-boot/dist/tickets-spring-boot.zip
+lcp deploy --extension client-extensions/ticket-spring-boot/dist/ticket-spring-boot.zip
 ```
 
 If it isn't working, see the troubleshooting section down below.  If it is working you should see the servie available and in the logs you should see a message like this:
@@ -390,7 +390,7 @@ It could be because the pod does not have enough memory.  Edit the `client-exten
 
 ```bash
 ./gradlew :client-extensions:ticket-spring-boot:build
-lcp deploy --extension client-extensions/tickets-spring-boot/dist/tickets-spring-boot.zip
+lcp deploy --extension client-extensions/ticket-spring-boot/dist/ticket-spring-boot.zip
 ```
 
 ### Spring boot microservice starts but is killed (/ready endpoint not available)
