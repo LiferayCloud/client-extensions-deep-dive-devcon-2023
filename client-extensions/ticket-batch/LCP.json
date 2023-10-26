@@ -1,0 +1,18 @@
+{
+	"cpu": 0.2,
+	"dependencies": [
+		"listtypebatch"
+	],
+	"env": {
+		"LIFERAY_BATCH_OAUTH_APP_ERC": "ticket-batch-importer"
+	},
+	"environments": {
+		"infra": {
+			"deploy": false
+		}
+	},
+	"id": "ticketbatch",
+	"kind": "Job",
+	"memory": 300,
+	"scale": 1
+}

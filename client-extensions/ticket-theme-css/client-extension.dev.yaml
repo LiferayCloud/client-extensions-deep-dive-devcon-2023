@@ -1,0 +1,7 @@
+ticket-theme-css:
+    clayURL: http://localhost:3000/css/clay.css
+    mainURL: http://localhost:3000/css/main.css
+ticket-theme-live-js:
+    name: Ticket Theme Live JS
+    type: globalJS
+    url: http://localhost:3000/browser-sync/browser-sync-client.js

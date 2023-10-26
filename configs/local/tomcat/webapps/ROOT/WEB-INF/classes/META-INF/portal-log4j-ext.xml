@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+
+<Configuration strict="true">
+    <Loggers>
+        <Logger level="WARN" name="com.liferay.oauth2.provider.internal.configuration.OAuth2ProviderApplicationHeadlessServerConfigurationFactory" />
+        <Logger level="WARN" name="com.liferay.oauth2.provider.internal.configuration.OAuth2ProviderApplicationUserAgentConfigurationFactory" />
+    </Loggers>
+</Configuration>

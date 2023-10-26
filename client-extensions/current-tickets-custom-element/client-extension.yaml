@@ -1,0 +1,27 @@
+# Liferay workspace can build front end projects but does not know
+#  which front-end build artifacts are relevant for your application.
+#
+#  This assemble block specifies which files need to be included
+#  in the client extension build artifact. In this case we are specifying
+#  the build/assets folder where our front-end build artifacts are created.
+#
+#  See https://learn.liferay.com/w/dxp/building-applications/client-extensions/working-with-client-extensions#assembling-client-extensions
+#  for more information
+assemble:
+    - from: build/assets
+      into: static
+# Here declare our custom element client extension. We
+#  specify for example which URLs are used to render our 
+#  application and that we use ES modules
+current-tickets-custom-element:
+    cssURLs:
+        - "*.css"
+    friendlyURLMapping: current-tickets-custom-element
+    htmlElementName: current-tickets-custom-element
+    instanceable: false
+    name: Current Tickets Custom Element
+    portletCategoryName: category.client-extensions
+    type: customElement
+    urls:
+        - "*.js"
+    useESM: true

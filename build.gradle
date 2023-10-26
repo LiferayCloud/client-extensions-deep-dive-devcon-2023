@@ -1,0 +1,3 @@
+createDockerContainer {
+	hostConfig.network = "host"
+}
