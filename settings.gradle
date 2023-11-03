@@ -2,6 +2,7 @@ buildscript {
 	dependencies {
 		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "5.3.0"
 		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.workspace", version: "9.0.4"
+		classpath group: "org.sonarsource.scanner.gradle", name: "sonarqube-gradle-plugin", version: "4.4.1.3373"
 	}
 
 	repositories {
@@ -9,6 +10,10 @@ buildscript {
 
 		maven {
 			url new File(rootProject.projectDir, "../../.m2-tmp")
+		}
+
+		maven {
+			url "https://plugins.gradle.org/m2/"
 		}
 
 		maven {
